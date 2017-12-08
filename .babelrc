@@ -1,0 +1,18 @@
+{
+    "presets": [
+        "env",
+        "babel-preset-power-assert"
+    ],
+    "env": {
+        "production": {
+            "plugins": [
+                "babel-plugin-unassert"
+            ]
+        },
+        "development": {
+            "plugins": [
+                "jsdoc-to-assert"
+            ]
+        }
+    }
+}
