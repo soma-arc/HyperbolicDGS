@@ -1,10 +1,15 @@
 import Vue from 'vue';
 import Root from './vue/root.vue';
+import Scene from './scene.js';
+import CanvasHandler from './canvasHandler.js';
 
 window.addEventListener('load', () => {
-    console.log('hello');
+    const scene = new Scene();
+    const canvasHandler = new CanvasHandler(scene);
+    
+    const d = { 'scene': scene,
+                'canvasHandler': canvasHandler };
 
-    const d = {};
     /* eslint-disable no-unused-vars */
     const app = new Vue({
         el: '#vue-ui',
@@ -14,4 +19,8 @@ window.addEventListener('load', () => {
         },
         components: { 'root': Root }
     });
+
+    canvasHandler.init();
+
+    canvasHandler.render();
 });
