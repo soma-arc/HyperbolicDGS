@@ -24,8 +24,16 @@ export default class Canvas2d {
 
         this.addEventListeners();
 
-        this.pixelRatio = 1; //window.devicePixelRatio;
+        this.pixelRatio = 1; // window.devicePixelRatio;
         this.canvasRatio = this.canvas.width / this.canvas.height / 2;
+
+        this.mouseState = {
+            isPressing: false,
+            position: new Complex(0, 0),
+            prevPosition: new Complex(0, 0),
+            prevTranslate: new Complex(0, 0),
+            button: -1
+        };
     }
 
     addEventListeners() {
@@ -53,6 +61,9 @@ export default class Canvas2d {
 
     render() {
         const ctx = this.ctx;
+        ctx.save();
+        ctx.fillStyle = 'rgb(255, 255, 255)';
+        ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
         ctx.beginPath();
         ctx.moveTo(0, this.canvas.height * 0.5);
         ctx.lineTo(this.canvas.width, this.canvas.height * 0.5);
@@ -62,27 +73,54 @@ export default class Canvas2d {
         ctx.moveTo(0, 0);
 
         ctx.translate(this.canvas.width * 0.5, this.canvas.height * 0.5);
-        ctx.scale(this.scale, this.scale);
+        ctx.scale(this.scale, -this.scale);
         ctx.lineWidth /= this.scale;
         this.scene.render(ctx);
+
+        ctx.restore();
     }
 
-    mouseDown() {
+    mouseDown(event) {
         const mouse = this.computeCoordinates(event.clientX, event.clientY);
+        this.mouseState.position = mouse;
+        let updated = false;
+        if (event.button === Canvas2d.MOUSE_BUTTON_LEFT) {
+            updated = this.scene.mouseLeft(this.mouseState);
+        } else if (event.button === Canvas2d.MOUSE_BUTTON_WHEEL) {
+            updated = this.scene.mouseWheel(this.mouseState);
+        } else if (event.button === Canvas2d.MOUSE_BUTTON_RIGHT) {
+            updated = this.scene.mouseRight(this.mouseState);
+        }
+
+        if (updated) this.render();
+
+        this.mouseState.prevPosition = mouse;
     }
 
-    mouseWheel() {
+    mouseWheel(event) {
     }
 
-    mouseMove() {
+    mouseMove(event) {
     }
 
-    mouseUp() {
+    mouseUp(event) {
     }
 
-    mouseOut() {
+    mouseOut(event) {
     }
 
     mouseDblClick() {
+    }
+
+    static get MOUSE_BUTTON_LEFT() {
+        return 0;
+    }
+
+    static get MOUSE_BUTTON_WHEEL() {
+        return 1;
+    }
+
+    static get MOUSE_BUTTON_RIGHT() {
+        return 2;
     }
 }

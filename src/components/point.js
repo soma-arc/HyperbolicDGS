@@ -10,16 +10,32 @@ export default class Point extends Shape {
     constructor(x, y) {
         super();
         this.values = new Complex(x, y);
-        this.uiRadius = 0.01;
+        this.uiRadius = 0.05;
+        this.selected = false;
     }
 
     /**
      * @param {CanvasRenderingContext2D} ctx
      */
-    draw(ctx) {
+    render(ctx) {
         ctx.beginPath();
-        ctx.arc(this.values.x, this.values.y, this.uiRadius,
+        ctx.fillStyle = 'rgb(0, 0, 0)';
+        ctx.arc(this.values.re, this.values.im, this.uiRadius,
                 0, Constants.TWO_PI);
         ctx.fill();
+    }
+
+    select(mouseState) {
+        const selected = Complex.distance(this.values, mouseState.position) < this.uiRadius;
+        if (selected) this.selected = selected;
+        return selected;
+    }
+
+    move(mouseState) {
+        this.values = mouseState.position;
+        this.updated();
+    }
+
+    updated() {
     }
 }

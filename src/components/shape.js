@@ -4,5 +4,8 @@ export default class Shape {
     }
 
     update() {}
-    draw(ctx) {}
+    render(ctx) {}
+    select(mouseState) {}
+    move(mouseState) {}
+    updated(mouseState) {}
 }

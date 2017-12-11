@@ -1,4 +1,5 @@
 import Circle from './components/circle.js';
+import Point from './components/point.js';
 
 export default class Scene {
     constructor() {
@@ -14,5 +15,17 @@ export default class Scene {
         for (const obj of this.objects) {
             obj.render(ctx);
         }
+    }
+
+    mouseLeft(mouseState) {
+        const p = mouseState.position;
+        this.objects.push(new Point(p.re, p.im));
+        return true;
+    }
+
+    mouseWheel(mouseState) {
+    }
+
+    mouseRight(mouseState) {
     }
 }
