@@ -43,7 +43,9 @@ export default class Scene {
 
     mouseLeft(mouseState) {
         const p = mouseState.position;
-        this.objects.push(new Point(p.re, p.im));
+        const point = new Point(p.re, p.im)
+        this.objects.push(point);
+        this.undoStack.push(new AddPointCommand(this, point));
         return true;
     }
 

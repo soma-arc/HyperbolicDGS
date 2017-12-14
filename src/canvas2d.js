@@ -21,6 +21,8 @@ export default class Canvas2d {
         this.boundMouseMove = this.mouseMove.bind(this);
         this.boundMouseOut = this.mouseOut.bind(this);
         this.boundDblClickLisntener = this.mouseDblClick.bind(this);
+        this.boundKeydown = this.keydown.bind(this);
+        this.boundKeyup = this.keyup.bind(this);
 
         this.addEventListeners();
 
@@ -53,6 +55,8 @@ export default class Canvas2d {
                                      this.boundMouseOut);
         this.canvas.addEventListener('dblclick',
                                      this.boundDblClick);
+        this.canvas.addEventListener('keydown', this.boundKeydown);
+        this.canvas.addEventListener('keyup', this.boundKeyup);
         this.canvas.addEventListener('contextmenu', event => event.preventDefault());
     }
 
@@ -94,6 +98,8 @@ export default class Canvas2d {
     }
 
     mouseDown(event) {
+        event.preventDefault();
+        this.canvas.focus();
         const mouse = this.computeCoordinates(event.clientX, event.clientY);
         this.mouseState.button = event.button;
         this.mouseState.position = mouse;
@@ -141,7 +147,22 @@ export default class Canvas2d {
         this.mouseState.isPressing = false;
     }
 
-    mouseDblClick() {
+    mouseDblClick(event) {
+    }
+
+    keydown(event) {
+        if (event.ctrlKey && event.key === 'y') {
+            console.log('redo');
+            this.scene.redo();
+            this.render();
+        } else if (event.ctrlKey && event.key === 'z') {
+            console.log('undo');
+            this.scene.undo();
+            this.render();
+        }
+    }
+
+    keyup(event) {
     }
 
     static get MOUSE_BUTTON_LEFT() {
