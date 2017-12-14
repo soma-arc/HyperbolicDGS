@@ -34,6 +34,10 @@ export default class Canvas2d {
             prevTranslate: new Complex(0, 0),
             button: -1
         };
+
+        this.scaleFactor = 1.2;
+        this.translate = new Complex(this.canvas.width * 0.5,
+                                       this.canvas.height * 0.5);
     }
 
     addEventListeners() {
@@ -49,6 +53,13 @@ export default class Canvas2d {
                                      this.boundMouseOut);
         this.canvas.addEventListener('dblclick',
                                      this.boundDblClick);
+        this.canvas.addEventListener('contextmenu', event => event.preventDefault());
+    }
+
+    computeCanvasCoordinates(mx, my) {
+        const rect = this.canvas.getBoundingClientRect();
+        return new Complex(mx - rect.left,
+                           my - rect.top);
     }
 
     computeCoordinates(mx, my) {
@@ -64,15 +75,17 @@ export default class Canvas2d {
         ctx.save();
         ctx.fillStyle = 'rgb(255, 255, 255)';
         ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+        ctx.translate(this.translate.re, this.translate.im);
+
         ctx.beginPath();
-        ctx.moveTo(0, this.canvas.height * 0.5);
-        ctx.lineTo(this.canvas.width, this.canvas.height * 0.5);
-        ctx.moveTo(this.canvas.width * 0.5, 0);
-        ctx.lineTo(this.canvas.width * 0.5, this.canvas.height);
+        ctx.moveTo(-this.translate.re - this.canvas.width, 0);
+        ctx.lineTo(-this.translate.re + this.canvas.width, 0);
+        ctx.moveTo(0, -this.translate.im - this.canvas.height);
+        ctx.lineTo(0, -this.translate.im + this.canvas.height);
         ctx.stroke();
         ctx.moveTo(0, 0);
 
-        ctx.translate(this.canvas.width * 0.5, this.canvas.height * 0.5);
         ctx.scale(this.scale, -this.scale);
         ctx.lineWidth /= this.scale;
         this.scene.render(ctx);
@@ -82,6 +95,7 @@ export default class Canvas2d {
 
     mouseDown(event) {
         const mouse = this.computeCoordinates(event.clientX, event.clientY);
+        this.mouseState.button = event.button;
         this.mouseState.position = mouse;
         let updated = false;
         if (event.button === Canvas2d.MOUSE_BUTTON_LEFT) {
@@ -89,24 +103,42 @@ export default class Canvas2d {
         } else if (event.button === Canvas2d.MOUSE_BUTTON_WHEEL) {
             updated = this.scene.mouseWheel(this.mouseState);
         } else if (event.button === Canvas2d.MOUSE_BUTTON_RIGHT) {
-            updated = this.scene.mouseRight(this.mouseState);
+//            updated = this.scene.mouseRight(this.mouseState);
+            this.mouseState.prevTranslate = this.translate;
         }
 
         if (updated) this.render();
 
-        this.mouseState.prevPosition = mouse;
+        this.mouseState.prevPosition = this.computeCanvasCoordinates(event.clientX, event.clientY);
+        this.mouseState.isPressing = true;
     }
 
     mouseWheel(event) {
+        event.preventDefault();
+        if (event.deltaY < 0) {
+            this.scale *= this.scaleFactor;
+        } else {
+            this.scale /= this.scaleFactor;
+        }
+        this.render();
     }
 
     mouseMove(event) {
+        if (!this.mouseState.isPressing) return;
+        if (this.mouseState.button === Canvas2d.MOUSE_BUTTON_RIGHT) {
+            const mouse = this.computeCanvasCoordinates(event.clientX,
+                                                        event.clientY);
+            this.translate = this.mouseState.prevTranslate.add(mouse.sub(this.mouseState.prevPosition));
+            this.render();
+        }
     }
 
     mouseUp(event) {
+        this.mouseState.isPressing = false;
     }
 
     mouseOut(event) {
+        this.mouseState.isPressing = false;
     }
 
     mouseDblClick() {
