@@ -10,7 +10,7 @@ export default class Point extends Shape {
     constructor(x, y) {
         super();
         this.values = new Complex(x, y);
-        this.uiRadius = 0.05;
+        this.uiRadius = 0.025;
         this.selected = false;
     }
 
@@ -19,6 +19,13 @@ export default class Point extends Shape {
      */
     render(ctx) {
         ctx.beginPath();
+        if (this.selected) {
+            ctx.fillStyle = 'rgb(0, 0, 100)';
+            ctx.arc(this.values.re, this.values.im,
+                    this.uiRadius * 1.1,
+                    0, Constants.TWO_PI);
+        }
+
         ctx.fillStyle = 'rgb(0, 0, 0)';
         ctx.arc(this.values.re, this.values.im, this.uiRadius,
                 0, Constants.TWO_PI);

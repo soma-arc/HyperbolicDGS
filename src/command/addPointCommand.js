@@ -10,6 +10,7 @@ export default class AddPointCommand {
     constructor(scene, point) {
         this.scene = scene;
         this.point = point
+        this.scene.objects.push(point);
     }
 
     undo() {

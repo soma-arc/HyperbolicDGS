@@ -75,6 +75,7 @@ export default class Canvas2d {
     }
 
     render() {
+        console.log(typeof this.scene.operationState)
         const ctx = this.ctx;
         ctx.save();
         ctx.fillStyle = 'rgb(255, 255, 255)';
@@ -109,7 +110,6 @@ export default class Canvas2d {
         } else if (event.button === Canvas2d.MOUSE_BUTTON_WHEEL) {
             updated = this.scene.mouseWheel(this.mouseState);
         } else if (event.button === Canvas2d.MOUSE_BUTTON_RIGHT) {
-//            updated = this.scene.mouseRight(this.mouseState);
             this.mouseState.prevTranslate = this.translate;
         }
 
@@ -130,6 +130,7 @@ export default class Canvas2d {
     }
 
     mouseMove(event) {
+        event.preventDefault();
         if (!this.mouseState.isPressing) return;
         if (this.mouseState.button === Canvas2d.MOUSE_BUTTON_RIGHT) {
             const mouse = this.computeCanvasCoordinates(event.clientX,
@@ -151,7 +152,7 @@ export default class Canvas2d {
     }
 
     keydown(event) {
-        if (event.ctrlKey && event.key === 'y') {
+        if (event.ctrlKey && event.shiftKey && event.key === 'Z') {
             console.log('redo');
             this.scene.redo();
             this.render();
