@@ -44,16 +44,31 @@ export default class Scene {
         }
     }
 
+    selectObj(mouseState) {
+        for (const obj of this.objects) {
+            if (obj.selected) continue;
+
+            const selected = obj.select(mouseState);
+            if (selected) {
+                this.selectedObjects.push(obj);
+                return true;
+            }
+        }
+        return false;
+    }
+
     mouseLeft(mouseState) {
         const p = mouseState.position;
+        this.deselectAll();
+
         switch (this.operationState) {
         case Scene.OP_STATE_SELECT:
-            for (const obj of this.objects) {
-                const selected = obj.select(mouseState);
-                if (selected) this.selectedObjects.push(obj);
-            }
+            this.selectObj(mouseState);
             break;
         case Scene.OP_STATE_POINT:
+            const selected = this.selectObj(mouseState);
+            if (selected) break;
+
             const point = new Point(p.re, p.im)
             this.undoStack.push(new AddPointCommand(this, point));
             this.discardRedoStack();
@@ -62,13 +77,28 @@ export default class Scene {
         return true;
     }
 
-    mouseMove(mouseState) {
+    mouseLeftDrag(mouseState) {
+        let moved = false;
+        for (const obj of this.selectedObjects) {
+            moved = moved || obj.move(mouseState);
+        }
+        return moved;
     }
 
     mouseWheel(mouseState) {
     }
 
     mouseRight(mouseState) {
+    }
+
+    mouseUp(mouseState) {
+    }
+
+    deselectAll() {
+        for (const obj of this.selectedObjects) {
+            obj.deselect();
+        }
+        this.selectedObjects = [];
     }
 
     static get OP_STATE_SELECT() {

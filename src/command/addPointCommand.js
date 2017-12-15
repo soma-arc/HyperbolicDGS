@@ -10,7 +10,10 @@ export default class AddPointCommand {
     constructor(scene, point) {
         this.scene = scene;
         this.point = point
+        this.scene.deselectAll();
         this.scene.objects.push(point);
+        point.selected = true;
+        this.scene.selectedObjects.push(point);
     }
 
     undo() {

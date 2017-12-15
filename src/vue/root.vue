@@ -35,4 +35,8 @@ div {
    -webkit-user-select: none;
    user-select: none;
 }
+
+canvas:focus {
+    outline: none;
+}
 </style>

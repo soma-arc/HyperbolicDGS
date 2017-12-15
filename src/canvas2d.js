@@ -132,7 +132,12 @@ export default class Canvas2d {
     mouseMove(event) {
         event.preventDefault();
         if (!this.mouseState.isPressing) return;
-        if (this.mouseState.button === Canvas2d.MOUSE_BUTTON_RIGHT) {
+
+        this.mouseState.position = this.computeCoordinates(event.clientX, event.clientY);
+        if (this.mouseState.button === Canvas2d.MOUSE_BUTTON_LEFT) {
+            const updated = this.scene.mouseLeftDrag(this.mouseState);
+            if (updated) this.render();
+        } else if (this.mouseState.button === Canvas2d.MOUSE_BUTTON_RIGHT) {
             const mouse = this.computeCanvasCoordinates(event.clientX,
                                                         event.clientY);
             this.translate = this.mouseState.prevTranslate.add(mouse.sub(this.mouseState.prevPosition));
@@ -142,6 +147,7 @@ export default class Canvas2d {
 
     mouseUp(event) {
         this.mouseState.isPressing = false;
+        this.scene.mouseUp(this.mouseState);
     }
 
     mouseOut(event) {
