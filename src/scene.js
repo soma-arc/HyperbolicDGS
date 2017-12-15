@@ -1,6 +1,8 @@
+import Complex from './utils/complex.js';
 import Circle from './components/circle.js';
 import Point from './components/point.js';
 import AddPointCommand from './command/addPointCommand.js';
+import MoveCommand from './command/moveCommand.js';
 
 export default class Scene {
     constructor() {
@@ -57,9 +59,15 @@ export default class Scene {
         return false;
     }
 
+    addCommand(command) {
+        this.undoStack.push(command);
+        this.discardRedoStack();
+    }
+
     mouseLeft(mouseState) {
         const p = mouseState.position;
         this.deselectAll();
+        this.moved = false;
 
         switch (this.operationState) {
         case Scene.OP_STATE_SELECT:
@@ -70,8 +78,7 @@ export default class Scene {
             if (selected) break;
 
             const point = new Point(p.re, p.im)
-            this.undoStack.push(new AddPointCommand(this, point));
-            this.discardRedoStack();
+            this.addCommand(new AddPointCommand(this, point));
             break;
         }
         return true;
@@ -82,6 +89,7 @@ export default class Scene {
         for (const obj of this.selectedObjects) {
             moved = moved || obj.move(mouseState);
         }
+        this.moved = this.moved || moved;
         return moved;
     }
 
@@ -92,6 +100,13 @@ export default class Scene {
     }
 
     mouseUp(mouseState) {
+        if (this.moved) {
+            for (const obj of this.selectedObjects) {
+                const d = mouseState.position.sub(mouseState.prevPosition);
+                if (d.abs() < 0.01) continue;
+                this.addCommand(new MoveCommand(obj, d));
+            }
+        }
     }
 
     deselectAll() {

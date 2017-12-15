@@ -33,6 +33,7 @@ export default class Canvas2d {
             isPressing: false,
             position: new Complex(0, 0),
             prevPosition: new Complex(0, 0),
+            prevCanvasCoord: new Complex(0, 0),
             prevTranslate: new Complex(0, 0),
             button: -1
         };
@@ -115,7 +116,8 @@ export default class Canvas2d {
 
         if (updated) this.render();
 
-        this.mouseState.prevPosition = this.computeCanvasCoordinates(event.clientX, event.clientY);
+        this.mouseState.prevCanvasCoord = this.computeCanvasCoordinates(event.clientX, event.clientY);
+        this.mouseState.prevPosition = mouse;
         this.mouseState.isPressing = true;
     }
 
@@ -140,7 +142,7 @@ export default class Canvas2d {
         } else if (this.mouseState.button === Canvas2d.MOUSE_BUTTON_RIGHT) {
             const mouse = this.computeCanvasCoordinates(event.clientX,
                                                         event.clientY);
-            this.translate = this.mouseState.prevTranslate.add(mouse.sub(this.mouseState.prevPosition));
+            this.translate = this.mouseState.prevTranslate.add(mouse.sub(this.mouseState.prevCanvasCoord));
             this.render();
         }
     }

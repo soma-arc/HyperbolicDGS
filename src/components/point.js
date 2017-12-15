@@ -47,6 +47,33 @@ export default class Point extends Shape {
         return true;
     }
 
+    /**
+     *
+     * @param {Complex} position
+     */
+    setPosition(position) {
+        this.values = position;
+        this.updated();
+    }
+
+    /**
+     *
+     * @param {Complex} translation
+     */
+    translate(translation) {
+        console.log(translation)
+        this.values = this.values.add(translation);
+        this.updated();
+    }
+
+    /**
+     *
+     * @returns {Complex}
+     */
+    getPosition() {
+        return this.values;
+    }
+
     updated() {
     }
 }
