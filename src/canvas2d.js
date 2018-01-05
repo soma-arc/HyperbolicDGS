@@ -76,7 +76,6 @@ export default class Canvas2d {
     }
 
     render() {
-        console.log(typeof this.scene.operationState)
         const ctx = this.ctx;
         ctx.save();
         ctx.fillStyle = 'rgb(255, 255, 255)';

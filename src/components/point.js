@@ -73,7 +73,4 @@ export default class Point extends Shape {
     getPosition() {
         return this.values;
     }
-
-    updated() {
-    }
 }

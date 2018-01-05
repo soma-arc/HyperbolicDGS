@@ -15,6 +15,14 @@ export default class Circle {
 
     /**
      *
+     * @returns {Complex}
+     */
+    getPosition() {
+        return this.center;
+    }
+    
+    /**
+     *
      * @param {CanvasRenderingContext2D} ctx
      */
     render(ctx) {
@@ -66,6 +74,12 @@ export default class Circle {
         const denom = coefA + coefB + coefC;
         const center = new Complex((coefA * a.re + coefB * b.re + coefC * c.re) / denom,
                                    (coefA * a.im + coefB * b.im + coefC * c.im) / denom);
-        return new Circle(center, Complex.distance(center, a));
+        return new Circle(center.re, center.im, Complex.distance(center, a));
+    }
+
+    static get POINCARE_DISK() {
+        return POINCARE_DISK;
     }
 }
+
+const POINCARE_DISK = new Circle(0, 0, 1);

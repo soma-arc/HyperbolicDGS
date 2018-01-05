@@ -1,8 +1,10 @@
 import Complex from './utils/complex.js';
 import Circle from './components/circle.js';
 import Point from './components/point.js';
+import HyperbolicLine from './components/hyperbolicLine.js';
 import AddPointCommand from './command/addPointCommand.js';
 import MoveCommand from './command/moveCommand.js';
+import AddHyperbolicLineCommand from './command/addHyperbolicLineCommand.js';
 
 export default class Scene {
     constructor() {
@@ -66,20 +68,33 @@ export default class Scene {
 
     mouseLeft(mouseState) {
         const p = mouseState.position;
-        this.deselectAll();
         this.moved = false;
 
         switch (this.operationState) {
-        case Scene.OP_STATE_SELECT:
+        case Scene.OP_STATE_SELECT: {
+            this.deselectAll();
             this.selectObj(mouseState);
             break;
-        case Scene.OP_STATE_POINT:
+        }
+        case Scene.OP_STATE_POINT: {
+            this.deselectAll();
             const selected = this.selectObj(mouseState);
             if (selected) break;
 
-            const point = new Point(p.re, p.im)
+            const point = new Point(p.re, p.im);
             this.addCommand(new AddPointCommand(this, point));
             break;
+        }
+        case Scene.OP_STATE_HYPERBOLIC_LINE: {
+            const selected = this.selectObj(mouseState);
+            if(this.selectedObjects.length === 2) {
+                console.log(this.selectedObjects[0])
+                const hypLine = new HyperbolicLine(this.selectedObjects[0],
+                                                   this.selectedObjects[1]);
+                this.addCommand(new AddHyperbolicLineCommand(this, hypLine));
+            }
+            break;
+        }
         }
         return true;
     }
@@ -111,6 +126,7 @@ export default class Scene {
 
     deselectAll() {
         for (const obj of this.selectedObjects) {
+            console.log(obj);
             obj.deselect();
         }
         this.selectedObjects = [];
@@ -122,5 +138,9 @@ export default class Scene {
 
     static get OP_STATE_POINT() {
         return 1;
+    }
+
+    static get OP_STATE_HYPERBOLIC_LINE() {
+        return 2;
     }
 }
