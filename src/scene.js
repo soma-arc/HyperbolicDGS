@@ -3,6 +3,7 @@ import Circle from './components/circle.js';
 import Point from './components/point.js';
 import HyperbolicLine from './components/hyperbolicLine.js';
 import HyperbolicLineFromCenter from './components/hyperbolicLineFromCenter.js';
+import PerpendicularBisector from './components/hyperbolicPerpendicularBisector.js';
 import AddPointCommand from './command/addPointCommand.js';
 import MoveCommand from './command/moveCommand.js';
 import AddHyperbolicLineCommand from './command/addHyperbolicLineCommand.js';
@@ -104,6 +105,14 @@ export default class Scene {
             }
             break;
         }
+        case Scene.OP_STATE_PERPENDICULAR_BISECTOR: {
+                        const selected = this.selectObj(mouseState);
+            if(this.selectedObjects.length === 2) {
+                const hypLine = new PerpendicularBisector(this.selectedObjects[0],
+                                                          this.selectedObjects[1]);
+                this.addCommand(new AddShapeCommand(this, hypLine));
+            }
+        }
         }
         return true;
     }
@@ -155,5 +164,9 @@ export default class Scene {
 
     static get OP_STATE_HYPERBOLIC_LINE_FROM_CENTER() {
         return 3;
+    }
+
+    static get OP_STATE_PERPENDICULAR_BISECTOR() {
+        return 4;
     }
 }
