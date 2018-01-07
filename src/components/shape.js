@@ -27,4 +27,18 @@ export default class Shape {
     addUpdateListener(listener) {
         this.updateListeners.push(listener);
     }
+
+    removeUpdateListener(listener) {
+        const idx = this.updateListeners.findIndex(
+            (element, index, array) => {
+                return element === listener;
+            },
+            listener
+        );
+        if (idx === -1)
+            return;
+
+        this.updateListeners.splice(idx, 1);
+        console.log('removed')
+    }
 }

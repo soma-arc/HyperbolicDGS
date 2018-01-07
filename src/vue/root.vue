@@ -2,12 +2,14 @@
 <div>
   <canvas id="mainCanvas" width="512px" height="512px"
           tabIndex="1000"></canvas><br>
-  <input type="radio" value="0"
+  <input type="radio" value="0" @change="changeMouseMode"
          v-model.number="scene.operationState">Select
-  <input type="radio" value="1"
+  <input type="radio" value="1" @change="changeMouseMode"
          v-model.number="scene.operationState">Point
-  <input type="radio" value="2"
+  <input type="radio" value="2" @change="changeMouseMode"
          v-model.number="scene.operationState">Hyperbolic Line
+  <input type="radio" value="3" @change="changeMouseMode"
+         v-model.number="scene.operationState">Hyperbolic Line from Center
 </div>
 </template>
 
@@ -19,11 +21,16 @@
           return {
               'OP_STATE_SELECT': Scene.OP_STATE_SELECT,
               'OP_STATE_POINT': Scene.OP_STATE_POINT,
-              'OP_STATE_HYPERBOLIC_LINE': Scene.OP_STATE_HYPERBOLIC_LINE
+              'OP_STATE_HYPERBOLIC_LINE': Scene.OP_STATE_HYPERBOLIC_LINE,
+              'OP_STATE_HYPERBOLIC_LINE_FROM_CENTER': Scene.OP_STATE_HYPERBOLIC_LINE_FROM_CENTER
           }
       },
       methods: {
           render: function() {
+              this.canvasHandler.render();
+          },
+          changeMouseMode: function() {
+              this.scene.deselectAll();
               this.canvasHandler.render();
           }
       }

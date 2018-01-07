@@ -1,7 +1,8 @@
+import Shape from '../components/shape.js';
 import Complex from '../utils/complex.js';
 import Constants from '../utils/constants.js';
 
-export default class Circle {
+export default class Circle extends Shape {
     /**
      *
      * @param {Number} x
@@ -9,6 +10,7 @@ export default class Circle {
      * @param {Number} r
      */
     constructor(x, y, r) {
+        super();
         this.center = new Complex(x, y);
         this.r = r;
     }

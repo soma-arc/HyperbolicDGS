@@ -2,9 +2,11 @@ import Complex from './utils/complex.js';
 import Circle from './components/circle.js';
 import Point from './components/point.js';
 import HyperbolicLine from './components/hyperbolicLine.js';
+import HyperbolicLineFromCenter from './components/hyperbolicLineFromCenter.js';
 import AddPointCommand from './command/addPointCommand.js';
 import MoveCommand from './command/moveCommand.js';
 import AddHyperbolicLineCommand from './command/addHyperbolicLineCommand.js';
+import AddShapeCommand from './command/addShapeCommand.js';
 
 export default class Scene {
     constructor() {
@@ -88,10 +90,17 @@ export default class Scene {
         case Scene.OP_STATE_HYPERBOLIC_LINE: {
             const selected = this.selectObj(mouseState);
             if(this.selectedObjects.length === 2) {
-                console.log(this.selectedObjects[0])
                 const hypLine = new HyperbolicLine(this.selectedObjects[0],
                                                    this.selectedObjects[1]);
                 this.addCommand(new AddHyperbolicLineCommand(this, hypLine));
+            }
+            break;
+        }
+        case Scene.OP_STATE_HYPERBOLIC_LINE_FROM_CENTER: {
+            const selected = this.selectObj(mouseState);
+            if(this.selectedObjects.length === 1) {
+                const hypLine = new HyperbolicLineFromCenter(this.selectedObjects[0]);
+                this.addCommand(new AddShapeCommand(this, hypLine));
             }
             break;
         }
@@ -142,5 +151,9 @@ export default class Scene {
 
     static get OP_STATE_HYPERBOLIC_LINE() {
         return 2;
+    }
+
+    static get OP_STATE_HYPERBOLIC_LINE_FROM_CENTER() {
+        return 3;
     }
 }
