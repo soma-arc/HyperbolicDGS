@@ -22,13 +22,24 @@ export default class Circle extends Shape {
     getPosition() {
         return this.center;
     }
-    
+
     /**
      *
      * @param {CanvasRenderingContext2D} ctx
      */
     render(ctx) {
+        if (this.selected) {
+            const tmp = ctx.lineWidth;
+            ctx.strokeStyle = 'rgb(66, 134, 244)';
+            ctx.lineWidth = tmp * 5;
+            ctx.beginPath();
+            ctx.arc(this.center.re, this.center.im, this.r,
+                    0, Constants.TWO_PI);
+            ctx.stroke();
+            ctx.lineWidth = tmp;
+        }
         ctx.beginPath();
+        ctx.strokeStyle = 'rgb(0, 0, 0)';
         ctx.arc(this.center.re, this.center.im, this.r,
                 0, Constants.TWO_PI);
         ctx.stroke();
