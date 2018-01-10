@@ -4,6 +4,7 @@ import Point from './components/point.js';
 import HyperbolicLine from './components/hyperbolicLine.js';
 import HyperbolicLineFromCenter from './components/hyperbolicLineFromCenter.js';
 import PerpendicularBisector from './components/hyperbolicPerpendicularBisector.js';
+import HyperbolicMiddlePoint from './components/hyperbolicMiddlePoint.js';
 import AddPointCommand from './command/addPointCommand.js';
 import MoveCommand from './command/moveCommand.js';
 import AddHyperbolicLineCommand from './command/addHyperbolicLineCommand.js';
@@ -90,7 +91,7 @@ export default class Scene {
         }
         case Scene.OP_STATE_HYPERBOLIC_LINE: {
             const selected = this.selectObj(mouseState);
-            if(this.selectedObjects.length === 2) {
+            if (this.selectedObjects.length === 2) {
                 const hypLine = new HyperbolicLine(this.selectedObjects[0],
                                                    this.selectedObjects[1]);
                 this.addCommand(new AddHyperbolicLineCommand(this, hypLine));
@@ -99,19 +100,29 @@ export default class Scene {
         }
         case Scene.OP_STATE_HYPERBOLIC_LINE_FROM_CENTER: {
             const selected = this.selectObj(mouseState);
-            if(this.selectedObjects.length === 1) {
+            if (this.selectedObjects.length === 1) {
                 const hypLine = new HyperbolicLineFromCenter(this.selectedObjects[0]);
                 this.addCommand(new AddShapeCommand(this, hypLine));
             }
             break;
         }
         case Scene.OP_STATE_PERPENDICULAR_BISECTOR: {
-                        const selected = this.selectObj(mouseState);
-            if(this.selectedObjects.length === 2) {
+            const selected = this.selectObj(mouseState);
+            if (this.selectedObjects.length === 2) {
                 const hypLine = new PerpendicularBisector(this.selectedObjects[0],
                                                           this.selectedObjects[1]);
                 this.addCommand(new AddShapeCommand(this, hypLine));
             }
+            break;
+        }
+        case Scene.OP_STATE_HYPERBOLIC_MIDDLE_POINT: {
+            const selected = this.selectObj(mouseState);
+            if (this.selectedObjects.length === 2) {
+                const p = new HyperbolicMiddlePoint(this.selectedObjects[0],
+                                                    this.selectedObjects[1]);
+                this.addCommand(new AddShapeCommand(this, p));
+            }
+            break
         }
         }
         return true;
@@ -144,7 +155,6 @@ export default class Scene {
 
     deselectAll() {
         for (const obj of this.selectedObjects) {
-            console.log(obj);
             obj.deselect();
         }
         this.selectedObjects = [];
@@ -168,5 +178,9 @@ export default class Scene {
 
     static get OP_STATE_PERPENDICULAR_BISECTOR() {
         return 4;
+    }
+
+    static get OP_STATE_HYPERBOLIC_MIDDLE_POINT() {
+        return 5;
     }
 }

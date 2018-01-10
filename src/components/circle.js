@@ -90,6 +90,30 @@ export default class Circle extends Shape {
         return new Circle(center.re, center.im, Complex.distance(center, a));
     }
 
+    /**
+     *
+     * @param {Circle} c1
+     * @param {Circle} c2
+     * @returns {[Complex, Complex]}
+     */
+    static computeIntersections(c1, c2) {
+        c2.center = c2.center.sub(c1.center);
+        const r1_2 = c1.r * c1.r;
+        const r2_2 = c2.r * c2.r;
+        const x2_2 = c2.center.re * c2.center.re;
+        const y2_2 = c2.center.im * c2.center.im;
+        const x2y2 = x2_2 + y2_2;
+        const a = (x2_2 + y2_2 + r1_2 - r2_2) * 0.5;
+        const rt = Math.sqrt(x2y2 * r1_2 - a * a);
+
+        const p1 = new Complex((a * c2.center.re + c2.center.im * rt) / x2y2,
+                               (a * c2.center.im - c2.center.re * rt) / x2y2).add(c1.center);
+        const p2 = new Complex((a * c2.center.re - c2.center.im * rt) / x2y2,
+                               (a * c2.center.im + c2.center.re * rt) / x2y2).add(c1.center);
+        c2.center = c2.center.add(c1.center);
+        return [p1, p2];
+    }
+
     static get POINCARE_DISK() {
         return POINCARE_DISK;
     }

@@ -12,6 +12,8 @@
          v-model.number="scene.operationState">Hyperbolic Line from Center
   <input type="radio" value="4" @change="changeMouseMode"
          v-model.number="scene.operationState">Perpendicular Bisector
+  <input type="radio" value="5" @change="changeMouseMode"
+         v-model.number="scene.operationState">Middle Point
 </div>
 </template>
 
@@ -25,7 +27,8 @@
               'OP_STATE_POINT': Scene.OP_STATE_POINT,
               'OP_STATE_HYPERBOLIC_LINE': Scene.OP_STATE_HYPERBOLIC_LINE,
               'OP_STATE_HYPERBOLIC_LINE_FROM_CENTER': Scene.OP_STATE_HYPERBOLIC_LINE_FROM_CENTER,
-              'OP_STATE_PERPENDICULAR_BISECTOR': Scene.OP_STATE_PERPENDICULAR_BISECTOR
+              'OP_STATE_PERPENDICULAR_BISECTOR': Scene.OP_STATE_PERPENDICULAR_BISECTOR,
+              'OP_STATE_HYPERBOLIC_MIDDLE_POINT': Scene.OP_STATE_HYPERBOLIC_MIDDLE_POINT
           }
       },
       methods: {
