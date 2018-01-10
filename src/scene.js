@@ -5,6 +5,7 @@ import HyperbolicLine from './components/hyperbolicLine.js';
 import HyperbolicLineFromCenter from './components/hyperbolicLineFromCenter.js';
 import PerpendicularBisector from './components/hyperbolicPerpendicularBisector.js';
 import HyperbolicMiddlePoint from './components/hyperbolicMiddlePoint.js';
+import PointOnCircle from './components/pointOnCircle.js';
 import AddPointCommand from './command/addPointCommand.js';
 import MoveCommand from './command/moveCommand.js';
 import AddHyperbolicLineCommand from './command/addHyperbolicLineCommand.js';
@@ -84,6 +85,12 @@ export default class Scene {
             this.deselectAll();
             const selected = this.selectObj(mouseState);
             if (selected) break;
+
+            if (Math.abs(Complex.distance(Circle.POINCARE_DISK.center, p) - 1) < 0.025) {
+                const point = new PointOnCircle(p, Circle.POINCARE_DISK);
+                this.addCommand(new AddShapeCommand(this, point));
+                break;
+            }
 
             const point = new Point(p.re, p.im);
             this.addCommand(new AddPointCommand(this, point));
