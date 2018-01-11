@@ -4,6 +4,7 @@ import Complex from '../utils/complex.js';
 
 export default class HyperbolicLineFromCenter extends Circle {
     /**
+     * The center should be outside of the poincare disk
      * @param {Point} center
      */
     constructor(center) {
@@ -11,9 +12,9 @@ export default class HyperbolicLineFromCenter extends Circle {
         this.centerPoint = center;
         this.center = center.values;
 
-        this.updateListener = this.computeCircle.bind(this);
+        this.updateListener = this.update.bind(this);
         this.centerPoint.addUpdateListener(this.updateListener);
-        this.computeCircle();
+        this.update();
     }
 
     removeUpdateListeners() {
@@ -21,14 +22,15 @@ export default class HyperbolicLineFromCenter extends Circle {
     }
 
     // http://shogo82148.github.io/homepage/memo/geometry/point-circle.html
-    computeCircle(){
+    update() {
         this.center = this.centerPoint.values;
         const sq = this.center.absSq();
         const c = this.center;
         const p1 = new Complex((c.re + c.im * Math.sqrt(sq - 1)) / sq,
                                (c.im - c.re * Math.sqrt(sq - 1)) / sq);
-        // const p2;
 
         this.r = Complex.distance(this.center, p1);
+
+        this.updated();
     }
 }

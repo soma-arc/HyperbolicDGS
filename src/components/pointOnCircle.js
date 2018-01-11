@@ -13,6 +13,7 @@ export default class PointOnCircle extends Point {
     constructor(p, circle) {
         super(0, 0);
         this.circle = circle;
+        p = p.sub(circle.center);
         this.angle = Math.atan2(p.im, p.re);
         this.updateListener = this.update.bind(this);
         this.circle.addUpdateListener(this.updateListener);
@@ -40,13 +41,13 @@ export default class PointOnCircle extends Point {
     }
 
     update() {
-        this.values = new Complex(this.circle.r * Math.cos(this.angle),
-                                  this.circle.r * Math.sin(this.angle));
+        this.values = new Complex(this.circle.r * Math.cos(this.angle) + this.circle.center.re,
+                                  this.circle.r * Math.sin(this.angle) + this.circle.center.im);
     }
 
     move(mouseState) {
-        this.angle = Math.atan2(mouseState.position.im,
-                                mouseState.position.re);
+        const p = mouseState.position.sub(this.circle.center);
+        this.angle = Math.atan2(p.im, p.re);
         this.update();
         this.updated();
         return true;

@@ -66,6 +66,22 @@ export default class Scene {
         return false;
     }
 
+    onCircles(mouseState) {
+        const circles = [];
+        if (Circle.POINCARE_DISK.select(mouseState)) {
+            circles.push(Circle.POINCARE_DISK);
+        }
+        for (const obj of this.objects) {
+            if (!(obj instanceof Circle)) continue;
+
+            const selected = obj.select(mouseState);
+            if (selected) {
+                circles.push(obj)
+            }
+        }
+        return circles;
+    }
+
     addCommand(command) {
         this.undoStack.push(command);
         this.discardRedoStack();
@@ -83,11 +99,11 @@ export default class Scene {
         }
         case Scene.OP_STATE_POINT: {
             this.deselectAll();
-            const selected = this.selectObj(mouseState);
-            if (selected) break;
 
-            if (Math.abs(Complex.distance(Circle.POINCARE_DISK.center, p) - 1) < 0.025) {
-                const point = new PointOnCircle(p, Circle.POINCARE_DISK);
+            const circles = this.onCircles(mouseState);
+            if (circles.length > 0) {
+                console.log('on');
+                const point = new PointOnCircle(p, circles[0]);
                 this.addCommand(new AddShapeCommand(this, point));
                 break;
             }

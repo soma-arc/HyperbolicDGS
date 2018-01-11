@@ -13,6 +13,14 @@ export default class Circle extends Shape {
         super();
         this.center = new Complex(x, y);
         this.r = r;
+
+        this.uiRadius = 0.025;
+    }
+
+    select(mouseState) {
+        this.diff = this.center.sub(mouseState.position);
+        const selected = Math.abs(this.diff.abs() - this.r) < this.uiRadius;
+        return selected;
     }
 
     /**

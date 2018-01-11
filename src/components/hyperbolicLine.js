@@ -10,8 +10,8 @@ export default class HyperbolicLine extends Circle {
         super(0, 0, 0);
         this.p1 = p1;
         this.p2 = p2;
-        this.computeCircle();
-        this.updateListener = this.computeCircle.bind(this);
+        this.update();
+        this.updateListener = this.update.bind(this);
         this.p1.addUpdateListener(this.updateListener);
         this.p2.addUpdateListener(this.updateListener);
     }
@@ -21,7 +21,7 @@ export default class HyperbolicLine extends Circle {
         this.p2.removeUpdateListener(this.updateListener);
     }
 
-    computeCircle() {
+    update() {
         const p1 = this.p1.values;
         const p2 = this.p2.values;
         const p1Inv = Circle.POINCARE_DISK.invertOnPoint(p1);
@@ -52,5 +52,7 @@ export default class HyperbolicLine extends Circle {
         }
         this.center = c.center;
         this.r = c.r;
+
+        this.updated();
     }
 }
