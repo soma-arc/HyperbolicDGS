@@ -46,6 +46,7 @@
         "test": "webpack --config=webpack.config-test.js && mocha --require source-map-support/register tmp/test-bundle.js"
     },
     "dependencies": {
+        "buefy": "^0.6.3",
         "url-loader": "^0.6.2"
     }
 }

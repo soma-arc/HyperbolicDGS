@@ -8,6 +8,8 @@ export default class CanvasHandler {
      */
     constructor(scene) {
         this.scene = scene;
+
+        this.resizeCallback = this.resize.bind(this);
     }
 
     init() {
@@ -15,6 +17,11 @@ export default class CanvasHandler {
     }
 
     render() {
+        this.mainCanvas.render();
+    }
+
+    resize() {
+        this.mainCanvas.resizeCanvas();
         this.mainCanvas.render();
     }
 }

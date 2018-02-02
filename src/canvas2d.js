@@ -38,9 +38,10 @@ export default class Canvas2d {
             button: -1
         };
 
+        this.resizeCanvas();
         this.scaleFactor = 1.2;
         this.translate = new Complex(this.canvas.width * 0.5,
-                                       this.canvas.height * 0.5);
+                                     this.canvas.height * 0.5);
     }
 
     addEventListeners() {
@@ -59,6 +60,13 @@ export default class Canvas2d {
         this.canvas.addEventListener('keydown', this.boundKeydown);
         this.canvas.addEventListener('keyup', this.boundKeyup);
         this.canvas.addEventListener('contextmenu', event => event.preventDefault());
+    }
+
+    resizeCanvas() {
+        const parent = this.canvas.parentElement;
+        this.canvas.width = parent.clientWidth * this.pixelRatio;
+        this.canvas.height = parent.clientHeight * this.pixelRatio;
+        this.canvasRatio = this.canvas.width / this.canvas.height / 2;
     }
 
     computeCanvasCoordinates(mx, my) {

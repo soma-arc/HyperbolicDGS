@@ -1,46 +1,23 @@
 <template>
-<div>
-  <canvas id="mainCanvas" width="512px" height="512px"
-          tabIndex="1000"></canvas><br>
-  <input type="radio" value="0" @change="changeMouseMode"
-         v-model.number="scene.operationState">Select
-  <input type="radio" value="1" @change="changeMouseMode"
-         v-model.number="scene.operationState">Point
-  <input type="radio" value="2" @change="changeMouseMode"
-         v-model.number="scene.operationState">Hyperbolic Line
-  <input type="radio" value="3" @change="changeMouseMode"
-         v-model.number="scene.operationState">Hyperbolic Line from Center
-  <input type="radio" value="4" @change="changeMouseMode"
-         v-model.number="scene.operationState">Perpendicular Bisector
-  <input type="radio" value="5" @change="changeMouseMode"
-         v-model.number="scene.operationState">Middle Point
-</div>
+  <div id="root">
+    <header-panel :scene="scene" :canvasManager="canvasManager"/>
+    <middle-panel :scene="scene" :canvasManager="canvasManager"/>
+    <footer-panel/>
+  </div>
 </template>
 
 <script>
-  import Scene from '../scene.js';
-  export default {
-      props: ['scene', 'canvasHandler'],
-      data: function() {
-          return {
-              'OP_STATE_SELECT': Scene.OP_STATE_SELECT,
-              'OP_STATE_POINT': Scene.OP_STATE_POINT,
-              'OP_STATE_HYPERBOLIC_LINE': Scene.OP_STATE_HYPERBOLIC_LINE,
-              'OP_STATE_HYPERBOLIC_LINE_FROM_CENTER': Scene.OP_STATE_HYPERBOLIC_LINE_FROM_CENTER,
-              'OP_STATE_PERPENDICULAR_BISECTOR': Scene.OP_STATE_PERPENDICULAR_BISECTOR,
-              'OP_STATE_HYPERBOLIC_MIDDLE_POINT': Scene.OP_STATE_HYPERBOLIC_MIDDLE_POINT
-          }
-      },
-      methods: {
-          render: function() {
-              this.canvasHandler.render();
-          },
-          changeMouseMode: function() {
-              this.scene.deselectAll();
-              this.canvasHandler.render();
-          }
-      }
-  }
+import Scene from '../scene.js';
+import HeaderPanel from './headerPanel.vue';
+import MiddlePanel from './middlePanel.vue';
+import FooterPanel from './footerPanel.vue';
+
+export default {
+    props: ['scene', 'canvasHandler'],
+    components: {
+        HeaderPanel, MiddlePanel, FooterPanel
+    }
+}
 </script>
 
 <style>
@@ -52,7 +29,11 @@ div {
    user-select: none;
 }
 
-canvas:focus {
-    outline: none;
+#root {
+    margin: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 </style>
