@@ -1,17 +1,86 @@
 <template>
   <div class="controlPanel">
-    <input type="radio" value="0" @change="changeMouseMode"
-           v-model.number="scene.operationState">Select
-    <input type="radio" value="1" @change="changeMouseMode"
-           v-model.number="scene.operationState">Point
-    <input type="radio" value="2" @change="changeMouseMode"
-           v-model.number="scene.operationState">Hyperbolic Line
-    <input type="radio" value="3" @change="changeMouseMode"
-           v-model.number="scene.operationState">Hyperbolic Line from Center
-    <input type="radio" value="4" @change="changeMouseMode"
-           v-model.number="scene.operationState">Perpendicular Bisector
-    <input type="radio" value="5" @change="changeMouseMode"
-           v-model.number="scene.operationState">Middle Point
+      <b-tabs position="is-centered" v-model="activeTab">
+        <b-tab-item label="Component">
+          <section id="component">
+            <label><b>Basic</b></label>
+            <b-field>
+              <b-radio-button v-model.number="scene.operationState"
+                              :native-value="OP_STATE_SELECT"
+                              @input="changeMouseMode"
+                              size="is-small">
+                <span>Select</span>
+              </b-radio-button>
+              <b-radio-button v-model.number="scene.operationState"
+                              :native-value="OP_STATE_POINT"
+                              @input="changeMouseMode"
+                              size="is-small">
+                <span>Point</span>
+              </b-radio-button>
+            </b-field>
+            <label><b>Hyperbolic Line</b></label>
+            <b-field>
+              <b-radio-button v-model.number="scene.operationState"
+                              :native-value="OP_STATE_HYPERBOLIC_LINE"
+                              @input="changeMouseMode"
+                              size="is-small">
+                <span>TwoPoint</span>
+              </b-radio-button>
+
+              <b-radio-button v-model.number="scene.operationState"
+                              :native-value="OP_STATE_HYPERBOLIC_LINE_FROM_CENTER"
+                              @input="changeMouseMode"
+                              size="is-small">
+                <span>FromCenter</span>
+              </b-radio-button>
+            </b-field>
+            <label><b>Bisection</b></label>
+            <b-field>
+              <b-radio-button v-model.number="scene.operationState"
+                              :native-value="OP_STATE_PERPENDICULAR_BISECTOR" @input="changeMouseMode"
+                              size="is-small">
+                <span>PerpendicularBisector</span>
+              </b-radio-button>
+
+              <b-radio-button v-model.number="scene.operationState"
+                              :native-value="OP_STATE_HYPERBOLIC_MIDDLE_POINT" @input="changeMouseMode"
+                              size="is-small">
+                <span>MiddlePoint</span>
+              </b-radio-button>
+            </b-field>
+          </section>
+        </b-tab-item>
+        <b-tab-item label="Scene">
+          <section>
+            <b-table :data="scene.objects"
+                     :columns="columns"
+                     :paginated="true"
+                     :per-page="perPage"
+                     :current-page.sync="currentPage"
+                     :pagination-simple="true"
+                     :stripe="true"
+                     :hoverable="true"
+                     :selected.sync="tableSelected">
+            <template slot="empty">
+                <section class="section">
+                    <div class="content has-text-grey has-text-centered">
+                        <p>
+                            <b-icon
+                                icon="emoticon-sad"
+                                size="is-large">
+                            </b-icon>
+                        </p>
+                        <p>Nothing here.</p>
+                    </div>
+                </section>
+            </template>
+            </b-table>
+          </section>
+        </b-tab-item>
+        <b-tab-item label="Render">
+        </b-tab-item>
+      </b-tabs>
+
   </div>
 </template>
 
@@ -26,9 +95,29 @@ export default {
             'OP_STATE_HYPERBOLIC_LINE': Scene.OP_STATE_HYPERBOLIC_LINE,
             'OP_STATE_HYPERBOLIC_LINE_FROM_CENTER': Scene.OP_STATE_HYPERBOLIC_LINE_FROM_CENTER,
             'OP_STATE_PERPENDICULAR_BISECTOR': Scene.OP_STATE_PERPENDICULAR_BISECTOR,
-            'OP_STATE_HYPERBOLIC_MIDDLE_POINT': Scene.OP_STATE_HYPERBOLIC_MIDDLE_POINT
-            }
+            'OP_STATE_HYPERBOLIC_MIDDLE_POINT': Scene.OP_STATE_HYPERBOLIC_MIDDLE_POINT,
+            'activeTab': 0,
+            'columns': [
+                {
+                    field: 'id',
+                    label: 'ID',
+                    width: '40',
+                    numeric: true
+                },
+            ],
+            'selected': null,
+            'currentPage': 1,
+            'perPage': 5,
+            'tableSelected': null,
+        }
     },
+    methods: {
+        changeMouseMode: function() {
+            this.scene.deselectAll();
+            this.canvasHandler.render();
+            console.log(this.scene.operationState);
+        }
+    }
 }
 </script>
 
@@ -36,9 +125,10 @@ export default {
 .controlPanel {
     border-style: ridge;
     border-color: gray;
-    background-color: Gainsboro;
-    display: flex;
+
     flex-direction: column;
     width:300px;
+    overflow: hidden;
 }
+
 </style>

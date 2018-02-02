@@ -22,6 +22,11 @@ export default class Scene {
         this.redoStack = [];
 
         this.selectedObjects = [];
+
+        this.isSelectable = false;
+    }
+
+    checkSelectable() {
     }
 
     undo() {

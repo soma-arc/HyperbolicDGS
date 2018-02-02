@@ -39,6 +39,10 @@ module.exports = () => ({
                 test: /\.png$/,
                 exclude: /node_modules/,
                 loader: 'url-loader',
+            },
+            {
+                test: /\.css$/,
+                loader: 'style-loader!css-loader'
             }
         ],
     },

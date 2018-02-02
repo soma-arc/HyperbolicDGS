@@ -152,6 +152,7 @@ export default class Canvas2d {
             this.translate = this.mouseState.prevTranslate.add(mouse.sub(this.mouseState.prevCanvasCoord));
             this.render();
         }
+        this.scene.checkSelectable(this.mouseState);
     }
 
     mouseUp(event) {

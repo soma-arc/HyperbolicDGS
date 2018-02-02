@@ -3,9 +3,11 @@ import Buefy from 'buefy';
 import Root from './vue/root.vue';
 import Scene from './scene.js';
 import CanvasHandler from './canvasHandler.js';
+import 'buefy/lib/buefy.css'
 
 window.addEventListener('load', () => {
     Vue.use(Buefy);
+    window.Vue = Vue;
     const scene = new Scene();
     const canvasHandler = new CanvasHandler(scene);
 

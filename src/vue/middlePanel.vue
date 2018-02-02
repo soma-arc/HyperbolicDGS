@@ -1,9 +1,10 @@
 <template>
   <div class="contentParent">
-    <div class="canvasParent">            
+    <div class="canvasParent"
+         v-bind:class="{ selectable: scene.isSelectable }">
       <canvas id="mainCanvas" tabIndex="1000"/><br>
     </div>
-    <controlPanel :scene="scene" :canvasManager="canvasManager"/>
+    <controlPanel :scene="scene" :canvasHandler="canvasHandler"/>
   </div>
 </template>
 
@@ -16,13 +17,13 @@ export default {
         render: function() {
             this.canvasHandler.render();
         },
-        changeMouseMode: function() {
-            this.scene.deselectAll();
-            this.canvasHandler.render();
-        }
     },
     components: {
         ControlPanel
+    },
+    data: function() {
+        return {
+        }
     }
 }
 </script>
@@ -32,10 +33,15 @@ canvas:focus {
     outline: none;
 }
 
+.selectable {
+    cursor: pointer;
+}
+
 .contentParent {
     flex: 1;
     display: flex;
     flex-direction: row;
+    overflow: hidden;
 }
 
 .canvasParent {
@@ -43,6 +49,7 @@ canvas:focus {
     display: flex;
     width:100%;
     border-style: ridge;
+    border-color: gray;
     overflow: hidden;
 }
 </style>

@@ -1,7 +1,7 @@
 <template>
   <div id="root">
-    <header-panel :scene="scene" :canvasManager="canvasManager"/>
-    <middle-panel :scene="scene" :canvasManager="canvasManager"/>
+    <header-panel :scene="scene" :canvasHandler="canvasHandler"/>
+    <middle-panel :scene="scene" :canvasHandler="canvasHandler"/>
     <footer-panel/>
   </div>
 </template>
