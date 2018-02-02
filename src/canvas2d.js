@@ -88,8 +88,8 @@ export default class Canvas2d {
         ctx.fillStyle = 'rgb(255, 255, 255)';
         ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-        ctx.translate(this.canvas.width * 0.5, this.canvas.height * 0.5);
-        ctx.translate(this.translate.re, this.translate.im);
+        ctx.translate(this.canvas.width * 0.5 + this.translate.re,
+                      this.canvas.height * 0.5 + this.translate.im);
 
         ctx.beginPath();
         ctx.moveTo(-this.translate.re - this.canvas.width, 0);

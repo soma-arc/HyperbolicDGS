@@ -12,6 +12,8 @@ export default class Point extends Shape {
         this.values = new Complex(x, y);
         this.uiRadius = 0.025;
         this.diff = new Complex(0, 0);
+        this.label = Shape.getUpperLabel;
+        this.type = 'Point';
     }
 
     /**
@@ -32,6 +34,16 @@ export default class Point extends Shape {
         ctx.arc(this.values.re, this.values.im, this.uiRadius,
                 0, Constants.TWO_PI);
         ctx.fill();
+
+        ctx.save();
+        ctx.translate((this.values.re + this.uiRadius),
+                      (this.values.im + this.uiRadius));
+        ctx.scale(0.1, -0.1);
+        ctx.font = '1px serif';
+        ctx.fillText(this.label,
+                     0,
+                     0);
+        ctx.restore();
     }
 
     select(mouseState) {

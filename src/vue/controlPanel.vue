@@ -52,7 +52,7 @@
         </b-tab-item>
         <b-tab-item label="Scene">
           <section>
-            <b-table :data="scene.objects"
+            <b-table :data="sceneObjectsList"
                      :columns="columns"
                      :paginated="true"
                      :per-page="perPage"
@@ -99,10 +99,14 @@ export default {
             'activeTab': 0,
             'columns': [
                 {
-                    field: 'id',
-                    label: 'ID',
+                    field: 'label',
+                    label: 'Label',
                     width: '40',
                     numeric: true
+                },
+                {
+                    field: 'type',
+                    label: 'Type',
                 },
             ],
             'selected': null,
@@ -116,6 +120,11 @@ export default {
             this.scene.deselectAll();
             this.canvasHandler.render();
             console.log(this.scene.operationState);
+        }
+    },
+    computed: {
+        sceneObjectsList: function() {
+            return this.scene.objects;
         }
     }
 }

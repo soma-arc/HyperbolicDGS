@@ -6,9 +6,7 @@ import HyperbolicLineFromCenter from './components/hyperbolicLineFromCenter.js';
 import PerpendicularBisector from './components/hyperbolicPerpendicularBisector.js';
 import HyperbolicMiddlePoint from './components/hyperbolicMiddlePoint.js';
 import PointOnCircle from './components/pointOnCircle.js';
-import AddPointCommand from './command/addPointCommand.js';
 import MoveCommand from './command/moveCommand.js';
-import AddHyperbolicLineCommand from './command/addHyperbolicLineCommand.js';
 import AddShapeCommand from './command/addShapeCommand.js';
 
 export default class Scene {
@@ -114,7 +112,7 @@ export default class Scene {
             }
 
             const point = new Point(p.re, p.im);
-            this.addCommand(new AddPointCommand(this, point));
+            this.addCommand(new AddShapeCommand(this, point));
             break;
         }
         case Scene.OP_STATE_HYPERBOLIC_LINE: {
@@ -122,7 +120,7 @@ export default class Scene {
             if (this.selectedObjects.length === 2) {
                 const hypLine = new HyperbolicLine(this.selectedObjects[0],
                                                    this.selectedObjects[1]);
-                this.addCommand(new AddHyperbolicLineCommand(this, hypLine));
+                this.addCommand(new AddShapeCommand(this, hypLine));
             }
             break;
         }

@@ -1,9 +1,12 @@
+let UpperLabelIndex = 0;
+let LowerLabelIndex = 0;
 export default class Shape {
     constructor() {
         this.id = new Date().getTime();
         this.selected = false;
 
         this.updateListeners = [];
+        this.label = this.id;
     }
 
     update() {}
@@ -40,5 +43,17 @@ export default class Shape {
 
         this.updateListeners.splice(idx, 1);
         console.log('removed')
+    }
+
+    static get getLowerLabel() {
+        const label = String.fromCharCode(97 + LowerLabelIndex % 26);
+        LowerLabelIndex++;
+        return label;
+    }
+
+    static get getUpperLabel() {
+        const label = String.fromCharCode(65 + UpperLabelIndex % 26);
+        UpperLabelIndex++;
+        return label;
     }
 }
