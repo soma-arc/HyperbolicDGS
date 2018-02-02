@@ -40,8 +40,7 @@ export default class Canvas2d {
 
         this.resizeCanvas();
         this.scaleFactor = 1.2;
-        this.translate = new Complex(this.canvas.width * 0.5,
-                                     this.canvas.height * 0.5);
+        this.translate = new Complex(0, 0);
     }
 
     addEventListeners() {
@@ -77,10 +76,10 @@ export default class Canvas2d {
 
     computeCoordinates(mx, my) {
         const rect = this.canvas.getBoundingClientRect();
-        return new Complex(this.canvas.width / this.scale * (((mx - rect.left) * this.pixelRatio) /
-                                         this.canvas.height - this.canvasRatio),
-                           this.canvas.height / this.scale * -(((my - rect.top) * this.pixelRatio) /
-                                          this.canvas.height - 0.5));
+        return new Complex(this.canvas.width / this.scale * (((mx - rect.left - this.translate.re) * this.pixelRatio) /
+                                                             this.canvas.width - 0.5),
+                           this.canvas.height / this.scale * -(((my - rect.top - this.translate.im) * this.pixelRatio) /
+                                                               this.canvas.height - 0.5));
     }
 
     render() {
@@ -89,6 +88,7 @@ export default class Canvas2d {
         ctx.fillStyle = 'rgb(255, 255, 255)';
         ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
+        ctx.translate(this.canvas.width * 0.5, this.canvas.height * 0.5);
         ctx.translate(this.translate.re, this.translate.im);
 
         ctx.beginPath();
