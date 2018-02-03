@@ -54,6 +54,20 @@
                 <span>MiddlePoint</span>
               </b-radio-button>
             </b-field>
+            <label><b>Circle</b></label>
+            <b-field>
+              <b-radio-button v-model.number="scene.operationState"
+                              :native-value="OP_STATE_CIRCLE_FROM_THREE_POINTS" @input="changeMouseMode"
+                              size="is-small">
+                <span>ThreePoints</span>
+              </b-radio-button>
+
+              <b-radio-button v-model.number="scene.operationState"
+                              :native-value="OP_STATE_CIRCLE_FROM_CENTER_AND_R" @input="changeMouseMode"
+                              size="is-small">
+                <span>CenterAndR</span>
+              </b-radio-button>
+            </b-field>
           </section>
         </b-tab-item>
         <b-tab-item label="Scene">
@@ -104,6 +118,7 @@ export default {
             'OP_STATE_HYPERBOLIC_MIDDLE_POINT': Scene.OP_STATE_HYPERBOLIC_MIDDLE_POINT,
             'OP_STATE_INVERSION': Scene.OP_STATE_INVERSION,
             'OP_STATE_CIRCLE_FROM_THREE_POINTS': Scene.OP_STATE_CIRCLE_FROM_THREE_POINTS,
+            'OP_STATE_CIRCLE_FROM_CENTER_AND_R': Scene.OP_STATE_CIRCLE_FROM_CENTER_AND_R,
             'activeTab': 0,
             'columns': [
                 {

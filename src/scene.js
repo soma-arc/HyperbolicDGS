@@ -11,10 +11,12 @@ import AddShapeCommand from './command/addShapeCommand.js';
 import InvertOnPoint from './components/invertOnPoint.js';
 import InvertOnCircle from './components/invertOnCircle.js';
 import CircleFromThreePoints from './components/circleFromThreePoints.js';
+import CircleFromCenterAndR from './components/circleFromCenterAndR.js';
 
 const OBJ_POINT = ['Point', 'PointOnCircle', 'InvertOnPoint'];
 const OBJ_CIRCLE = ['PoincareDisk', 'HyperbolicLine', 'HyperbolicLineFromCenter',
-                    'HyperbolicPerpendicularBisector', 'InvertOnCircle'];
+                    'HyperbolicPerpendicularBisector', 'InvertOnCircle',
+                    'CircleFromThreePoints', 'CircleFromCenterAndR'];
 const OBJ_SELECTION_ORDER = Array.prototype.concat.apply([],
                                                          [OBJ_POINT,
                                                           OBJ_CIRCLE]);
@@ -214,6 +216,33 @@ export default class Scene {
         }
     }
 
+    addCircleFromThreePoints(mouseState) {
+        if (this.selectedObjects.length <= 1) {
+            this.addPoint(mouseState);
+        } else if (this.selectedObjects.length === 2) {
+            this.addPoint(mouseState);
+            const c = new CircleFromThreePoints(this.selectedObjects[0],
+                                                this.selectedObjects[1],
+                                                this.selectedObjects[2]);
+            this.addCommand(new AddShapeCommand(this, c, c.type));
+            this.deselectAll();
+            this.removePreviewObjects();
+        }
+    }
+
+    addCircleFromCenterAndR(mouseState) {
+        if (this.selectedObjects.length === 0) {
+            this.addPoint(mouseState);
+        } else if (this.selectedObjects.length === 1) {
+            this.addPoint(mouseState);
+            const c = new CircleFromCenterAndR(this.selectedObjects[0],
+                                               this.selectedObjects[1]);
+            this.addCommand(new AddShapeCommand(this, c, c.type));
+            this.deselectAll();
+            this.removePreviewObjects();
+        }
+    }
+
     mouseLeft(mouseState) {
         this.moved = false;
 
@@ -246,6 +275,14 @@ export default class Scene {
         }
         case Scene.OP_STATE_INVERSION: {
             this.applyInversion(mouseState);
+            break;
+        }
+        case Scene.OP_STATE_CIRCLE_FROM_THREE_POINTS: {
+            this.addCircleFromThreePoints(mouseState);
+            break;
+        }
+        case Scene.OP_STATE_CIRCLE_FROM_CENTER_AND_R: {
+            this.addCircleFromCenterAndR(mouseState);
             break;
         }
         }
@@ -307,6 +344,34 @@ export default class Scene {
                 this.previewObjects.push(p);
                 this.previewObjects.push(new HyperbolicMiddlePoint(this.selectedObjects[0],
                                                                    p, true));
+                return true;
+            }
+            break;
+        }
+        case Scene.OP_STATE_CIRCLE_FROM_THREE_POINTS: {
+            if (this.selectedObjects.length === 2) {
+                this.removePreviewObjects();
+                const p = new Point(mouseState.position.re,
+                                    mouseState.position.im,
+                                    true);
+                this.previewObjects.push(p);
+                this.previewObjects.push(new CircleFromThreePoints(this.selectedObjects[0],
+                                                                   this.selectedObjects[1],
+                                                                   p,
+                                                                   true));
+                return true;
+            }
+            break;
+        }
+        case Scene.OP_STATE_CIRCLE_FROM_CENTER_AND_R: {
+            if (this.selectedObjects.length === 1) {
+                this.removePreviewObjects();
+                const p = new Point(mouseState.position.re,
+                                    mouseState.position.im,
+                                    true);
+                this.previewObjects.push(p);
+                this.previewObjects.push(new CircleFromCenterAndR(this.selectedObjects[0],
+                                                                  p, true));
                 return true;
             }
             break;
@@ -380,5 +445,9 @@ export default class Scene {
 
     static get OP_STATE_CIRCLE_FROM_THREE_POINTS() {
         return 7;
+    }
+
+    static get OP_STATE_CIRCLE_FROM_CENTER_AND_R() {
+        return 8;
     }
 }

@@ -17,6 +17,7 @@ export default class PointOnCircle extends Point {
         this.angle = Math.atan2(p.im, p.re);
         this.updateListener = this.update.bind(this);
         this.circle.addUpdateListener(this.updateListener);
+        
         this.update();
         this.type = 'PointOnCircle';
     }
@@ -44,6 +45,8 @@ export default class PointOnCircle extends Point {
     update() {
         this.values = new Complex(this.circle.r * Math.cos(this.angle) + this.circle.center.re,
                                   this.circle.r * Math.sin(this.angle) + this.circle.center.im);
+
+        this.updated();
     }
 
     move(mouseState) {
