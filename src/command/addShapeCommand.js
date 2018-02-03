@@ -13,14 +13,13 @@ export default class AddShapeCommand {
         this.scene = scene;
         this.shape = shape;
         this.type = type;
-        this.scene.deselectAll();
 
         if (!this.scene.objects.hasOwnProperty(type)) {
             Vue.set(this.scene.objects, type, []);
         }
 
         this.scene.objects[type].push(shape);
-        shape.selected = true;
+        shape.select();
         this.scene.selectedObjects.push(shape);
     }
 

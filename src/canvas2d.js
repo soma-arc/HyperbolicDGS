@@ -140,28 +140,34 @@ export default class Canvas2d {
 
     mouseMove(event) {
         event.preventDefault();
-        if (!this.mouseState.isPressing) return;
 
         this.mouseState.position = this.computeCoordinates(event.clientX, event.clientY);
         if (this.mouseState.button === Canvas2d.MOUSE_BUTTON_LEFT) {
+            if (!this.mouseState.isPressing) return;
             const updated = this.scene.mouseLeftDrag(this.mouseState);
             if (updated) this.render();
         } else if (this.mouseState.button === Canvas2d.MOUSE_BUTTON_RIGHT) {
+            if (!this.mouseState.isPressing) return;
             const mouse = this.computeCanvasCoordinates(event.clientX,
                                                         event.clientY);
             this.translate = this.mouseState.prevTranslate.add(mouse.sub(this.mouseState.prevCanvasCoord));
             this.render();
+        } else {
+            const updated = this.scene.mouseMove(this.mouseState);
+            if (updated) this.render();
         }
-        this.scene.checkSelectable(this.mouseState);
     }
 
     mouseUp(event) {
         this.mouseState.isPressing = false;
+        this.mouseState.button = -1;
         this.scene.mouseUp(this.mouseState);
     }
 
     mouseOut(event) {
         this.mouseState.isPressing = false;
+        this.scene.mouseOut(this.mouseState);
+        this.render();
     }
 
     mouseDblClick(event) {

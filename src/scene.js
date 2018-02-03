@@ -9,10 +9,18 @@ import PointOnCircle from './components/pointOnCircle.js';
 import MoveCommand from './command/moveCommand.js';
 import AddShapeCommand from './command/addShapeCommand.js';
 
+const OBJ_SELECTION_ORDER = ['Point', 'PointOnCircle', 'HyperbolicMiddlePoint',
+                             'HyperbolicLine', 'HyperbolicLineFromCenter',
+                             'HyperbolicPerpendicularBisector'];
+const OBJ_POINT = ['Point', 'PointOnCircle'];
+const OBJ_CIRCLE = ['PoincareDisk', 'HyperbolicLine', 'HyperbolicLineFromCenter',
+                    'HyperbolicPerpendicularBisector'];
+
 export default class Scene {
     constructor() {
         this.poincareDisk = new Circle(0, 0, 1);
         this.objects = {};
+        this.objects['PoincareDisk'] = [Circle.POINCARE_DISK];
 
         this.operationState = Scene.OP_STATE_SELECT;
 
@@ -21,10 +29,27 @@ export default class Scene {
 
         this.selectedObjects = [];
 
+        this.previewObjects = [];
+
         this.isSelectable = false;
     }
 
-    checkSelectable() {
+    checkSelectable(mouseState) {
+        let selectable = false;
+        this.selectableObjects = {};
+        for (const key of Object.keys(this.objects)) {
+            for (const obj of this.objects[key]) {
+                if (obj.selectable(mouseState)) {
+                    if (!this.selectableObjects.hasOwnProperty(key)) {
+                        this.selectableObjects[key] = [];
+                    }
+                    this.selectableObjects[key].push(obj);
+                    selectable = true;
+                }
+            }
+        }
+
+        this.isSelectable = selectable;
     }
 
     undo() {
@@ -50,7 +75,9 @@ export default class Scene {
      * @param {CanvasRenderingContext2D} ctx
      */
     render(ctx) {
-        this.poincareDisk.render(ctx);
+        for (const obj of this.previewObjects) {
+            obj.render(ctx);
+        }
         for (const arr of Object.values(this.objects)) {
             for (const obj of arr) {
                 obj.render(ctx);
@@ -58,37 +85,20 @@ export default class Scene {
         }
     }
 
-    selectObj(mouseState) {
-        for (const arr of Object.values(this.objects)) {
-            for (const obj of arr) {
-                if (obj.selected) continue;
-
-                const selected = obj.select(mouseState);
-                if (selected) {
-                    this.selectedObjects.push(obj);
-                    return true;
+    select() {
+        for (const key of OBJ_SELECTION_ORDER) {
+            if (this.selectableObjects.hasOwnProperty(key)) {
+                for (const obj of this.selectableObjects[key]) {
+                    this.selectObj(obj)
+                    return;
                 }
             }
         }
-        return false;
     }
 
-    onCircles(mouseState) {
-        const circles = [];
-        if (Circle.POINCARE_DISK.select(mouseState)) {
-            circles.push(Circle.POINCARE_DISK);
-        }
-        for (const arr of Object.values(this.objects)) {
-            for (const obj of arr) {
-                if (!(obj instanceof Circle)) continue;
-
-                const selected = obj.select(mouseState);
-                if (selected) {
-                    circles.push(obj)
-                }
-            }
-        }
-        return circles;
+    selectObj(obj) {
+        obj.select();
+        this.selectedObjects.push(obj);
     }
 
     addCommand(command) {
@@ -96,64 +106,106 @@ export default class Scene {
         this.discardRedoStack();
     }
 
-    mouseLeft(mouseState) {
+    addPoint(mouseState) {
+        for (const key of OBJ_POINT) {
+            if (this.selectableObjects.hasOwnProperty(key)) {
+                this.selectObj(this.selectableObjects[key][0]);
+                return false;
+            }
+        }
         const p = mouseState.position;
+        for (const key of OBJ_CIRCLE) {
+            if (this.selectableObjects.hasOwnProperty(key)) {
+                const c = this.selectableObjects[key][0];
+                const point = new PointOnCircle(p, c);
+                this.addCommand(new AddShapeCommand(this, point, point.type));
+                return true;
+            }
+        }
+
+        const point = new Point(p.re, p.im);
+        this.addCommand(new AddShapeCommand(this, point, point.type));
+        return true;
+    }
+
+    addHyperbolicLine(mouseState) {
+        if (this.selectedObjects.length === 0) {
+            this.addPoint(mouseState);
+        } else if (this.selectedObjects.length === 1) {
+            this.addPoint(mouseState);
+            const hypLine = new HyperbolicLine(this.selectedObjects[0],
+                                               this.selectedObjects[1]);
+            this.addCommand(new AddShapeCommand(this, hypLine, hypLine.type));
+            this.deselectAll();
+            this.removePreviewObjects();
+        }
+    }
+
+    addHyperbolicLineFromCenter(mouseState) {
+        if (this.selectedObjects.length === 0) {
+            this.addPoint(mouseState);
+            const hypLine = new HyperbolicLineFromCenter(this.selectedObjects[0]);
+            this.addCommand(new AddShapeCommand(this, hypLine, hypLine.type));
+            this.deselectAll();
+            this.removePreviewObjects();
+        }
+    }
+
+    addPerpendicularBisector(mouseState) {
+        if (this.selectedObjects.length === 0) {
+            this.addPoint(mouseState);
+        } else if (this.selectedObjects.length === 1) {
+            this.addPoint(mouseState);
+            const hypLine = new PerpendicularBisector(this.selectedObjects[0],
+                                                      this.selectedObjects[1]);
+            this.addCommand(new AddShapeCommand(this, hypLine, hypLine.type));
+            this.deselectAll();
+            this.removePreviewObjects();
+
+        }
+    }
+
+    addMiddlePoint(mouseState) {
+        if (this.selectedObjects.length === 0) {
+            this.addPoint(mouseState);
+        } else if (this.selectedObjects.length === 1) {
+            this.addPoint(mouseState);
+            const p = new HyperbolicMiddlePoint(this.selectedObjects[0],
+                                                this.selectedObjects[1]);
+            this.addCommand(new AddShapeCommand(this, p, p.type));
+            this.deselectAll();
+            this.removePreviewObjects();
+        }
+    }
+
+    mouseLeft(mouseState) {
         this.moved = false;
 
         switch (this.operationState) {
         case Scene.OP_STATE_SELECT: {
             this.deselectAll();
-            this.selectObj(mouseState);
+            this.select(mouseState);
             break;
         }
         case Scene.OP_STATE_POINT: {
             this.deselectAll();
-
-            const circles = this.onCircles(mouseState);
-            if (circles.length > 0) {
-                console.log('on');
-                const point = new PointOnCircle(p, circles[0]);
-                this.addCommand(new AddShapeCommand(this, point, point.type));
-                break;
-            }
-
-            const point = new Point(p.re, p.im);
-            this.addCommand(new AddShapeCommand(this, point, point.type));
+            this.addPoint(mouseState);
             break;
         }
         case Scene.OP_STATE_HYPERBOLIC_LINE: {
-            const selected = this.selectObj(mouseState);
-            if (this.selectedObjects.length === 2) {
-                const hypLine = new HyperbolicLine(this.selectedObjects[0],
-                                                   this.selectedObjects[1]);
-                this.addCommand(new AddShapeCommand(this, hypLine, hypLine.type));
-            }
+            this.addHyperbolicLine(mouseState);
             break;
         }
         case Scene.OP_STATE_HYPERBOLIC_LINE_FROM_CENTER: {
-            const selected = this.selectObj(mouseState);
-            if (this.selectedObjects.length === 1) {
-                const hypLine = new HyperbolicLineFromCenter(this.selectedObjects[0]);
-                this.addCommand(new AddShapeCommand(this, hypLine, hypLine.type));
-            }
+            this.addHyperbolicLineFromCenter(mouseState);
             break;
         }
         case Scene.OP_STATE_PERPENDICULAR_BISECTOR: {
-            const selected = this.selectObj(mouseState);
-            if (this.selectedObjects.length === 2) {
-                const hypLine = new PerpendicularBisector(this.selectedObjects[0],
-                                                          this.selectedObjects[1]);
-                this.addCommand(new AddShapeCommand(this, hypLine, hypLine.type));
-            }
+            this.addPerpendicularBisector(mouseState);
             break;
         }
         case Scene.OP_STATE_HYPERBOLIC_MIDDLE_POINT: {
-            const selected = this.selectObj(mouseState);
-            if (this.selectedObjects.length === 2) {
-                const p = new HyperbolicMiddlePoint(this.selectedObjects[0],
-                                                    this.selectedObjects[1]);
-                this.addCommand(new AddShapeCommand(this, p, p.type));
-            }
+            this.addMiddlePoint(mouseState);
             break
         }
         }
@@ -167,6 +219,61 @@ export default class Scene {
         }
         this.moved = this.moved || moved;
         return moved;
+    }
+
+    mouseMove(mouseState) {
+        this.checkSelectable(mouseState);
+        switch (this.operationState) {
+        case Scene.OP_STATE_HYPERBOLIC_LINE: {
+            if (this.selectedObjects.length === 1) {
+                this.removePreviewObjects();
+                const p = new Point(mouseState.position.re,
+                                    mouseState.position.im,
+                                    true);
+                this.previewObjects.push(p);
+                this.previewObjects.push(new HyperbolicLine(this.selectedObjects[0], p, true));
+                return true;
+            }
+            break;
+        }
+        case Scene.OP_STATE_HYPERBOLIC_LINE_FROM_CENTER: {
+            this.removePreviewObjects();
+            const p = new Point(mouseState.position.re,
+                                mouseState.position.im,
+                                true);
+            this.previewObjects.push(p);
+            this.previewObjects.push(new HyperbolicLineFromCenter(p, true));
+            return true;
+        }
+        case Scene.OP_STATE_PERPENDICULAR_BISECTOR: {
+            if (this.selectedObjects.length === 1) {
+                this.removePreviewObjects();
+                const p = new Point(mouseState.position.re,
+                                    mouseState.position.im,
+                                    true);
+                this.previewObjects.push(p);
+                this.previewObjects.push(new PerpendicularBisector(this.selectedObjects[0],
+                                                                   p, true));
+                return true;
+            }
+            break;
+        }
+        case Scene.OP_STATE_HYPERBOLIC_MIDDLE_POINT: {
+            if (this.selectedObjects.length === 1) {
+                this.removePreviewObjects();
+                const p = new Point(mouseState.position.re,
+                                    mouseState.position.im,
+                                    true);
+                this.previewObjects.push(p);
+                this.previewObjects.push(new HyperbolicMiddlePoint(this.selectedObjects[0],
+                                                                   p, true));
+                return true;
+            }
+            break;
+        }
+        }
+        this.previewObjects = [];
+        return false;
     }
 
     mouseWheel(mouseState) {
@@ -183,6 +290,17 @@ export default class Scene {
                 this.addCommand(new MoveCommand(obj, d));
             }
         }
+    }
+
+    removePreviewObjects() {
+        for (const obj of this.previewObjects) {
+            obj.removeUpdateListeners();
+        }
+        this.previewObjects = [];
+    }
+
+    mouseOut(mouseState) {
+        this.removePreviewObjects();
     }
 
     deselectAll() {

@@ -11,8 +11,9 @@ export default class Shape {
 
     update() {}
     render(ctx) {}
-    select(mouseState) {
-        return false;
+    selectable(mouseState) {}
+    select() {
+        this.selected = true;
     }
     move(mouseState) {}
     updated(mouseState) {}
@@ -21,7 +22,7 @@ export default class Shape {
         this.selected = false;
     }
 
-    updated() {
+    updated () {
         for (const listener of this.updateListeners) {
             listener();
         }
@@ -38,12 +39,12 @@ export default class Shape {
             },
             listener
         );
-        if (idx === -1)
-            return;
+        if (idx === -1) return;
 
         this.updateListeners.splice(idx, 1);
-        console.log('removed')
     }
+
+    removeUpdateListeners() {}
 
     static get getLowerLabel() {
         const label = String.fromCharCode(97 + LowerLabelIndex % 26);

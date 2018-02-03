@@ -7,7 +7,7 @@ export default class HyperbolicLine extends Circle {
      * @param {Point} p1
      * @param {Point} p2
      */
-    constructor(p1, p2) {
+    constructor(p1, p2, isPreview) {
         super(0, 0, 0);
         this.p1 = p1;
         this.p2 = p2;
@@ -16,7 +16,11 @@ export default class HyperbolicLine extends Circle {
         this.p1.addUpdateListener(this.updateListener);
         this.p2.addUpdateListener(this.updateListener);
         this.type = 'HyperbolicLine';
-        this.label = Shape.getLowerLabel;
+        if (isPreview === undefined) {
+            this.label = Shape.getLowerLabel;
+        } else {
+            this.label = '';
+        }
     }
 
     removeUpdateListeners() {

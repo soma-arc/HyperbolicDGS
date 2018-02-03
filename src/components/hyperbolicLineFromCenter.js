@@ -1,3 +1,4 @@
+import Shape from './shape.js';
 import Point from './point.js';
 import Circle from './circle.js';
 import Complex from '../utils/complex.js';
@@ -7,7 +8,7 @@ export default class HyperbolicLineFromCenter extends Circle {
      * The center should be outside of the poincare disk
      * @param {Point} center
      */
-    constructor(center) {
+    constructor(center, isPreview) {
         super(0, 0, 0);
         this.centerPoint = center;
         this.center = center.values;
@@ -17,6 +18,11 @@ export default class HyperbolicLineFromCenter extends Circle {
         this.update();
 
         this.type = 'HyperbolicLineFromCenter';
+        if (isPreview) {
+            this.label = '';
+        } else {
+            this.label = Shape.getLowerLabel;
+        }
     }
 
     removeUpdateListeners() {

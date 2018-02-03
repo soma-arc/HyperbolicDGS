@@ -7,12 +7,17 @@ export default class Point extends Shape {
      * @param {Number} x
      * @param {Number} y
      */
-    constructor(x, y) {
+    constructor(x, y, isPreview) {
         super();
         this.values = new Complex(x, y);
         this.uiRadius = 0.025;
         this.diff = new Complex(0, 0);
-        this.label = Shape.getUpperLabel;
+        if (isPreview === undefined) {
+            this.label = Shape.getUpperLabel;
+        } else {
+            this.label = '';
+        }
+
         this.type = 'Point';
     }
 
@@ -46,11 +51,9 @@ export default class Point extends Shape {
         ctx.restore();
     }
 
-    select(mouseState) {
+    selectable(mouseState) {
         this.diff = this.values.sub(mouseState.position);
-        const selected = Complex.abs(this.diff) < this.uiRadius;
-        if (selected) this.selected = selected;
-        return selected;
+        return Complex.abs(this.diff) < this.uiRadius;
     }
 
     move(mouseState) {

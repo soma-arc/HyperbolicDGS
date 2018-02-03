@@ -8,7 +8,7 @@ export default class HyperbolicPerpendicularBisector extends Circle {
      * @param {Point} p1
      * @param {Point} p2
      */
-    constructor(p1, p2) {
+    constructor(p1, p2, isPreview) {
         super(0, 0, 0);
         this.p1 = p1;
         this.p2 = p2;
@@ -19,7 +19,12 @@ export default class HyperbolicPerpendicularBisector extends Circle {
         this.computeCircle();
 
         this.type = 'HyperbolicPerpendicularBisector';
-        this.label = Shape.getLowerLabel;
+
+        if (isPreview) {
+            this.label = '';
+        } else {
+            this.label = Shape.getLowerLabel;
+        }
     }
 
     removeUpdateListeners() {

@@ -17,10 +17,9 @@ export default class Circle extends Shape {
         this.uiRadius = 0.025;
     }
 
-    select(mouseState) {
+    selectable(mouseState) {
         this.diff = this.center.sub(mouseState.position);
-        const selected = Math.abs(this.diff.abs() - this.r) < this.uiRadius;
-        return selected;
+        return Math.abs(this.diff.abs() - this.r) < this.uiRadius;
     }
 
     /**
