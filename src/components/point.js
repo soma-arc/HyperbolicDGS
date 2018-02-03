@@ -10,7 +10,7 @@ export default class Point extends Shape {
     constructor(x, y, isPreview) {
         super();
         this.values = new Complex(x, y);
-        this.uiRadius = 0.025;
+        this.uiRadius = 0.03;
         this.diff = new Complex(0, 0);
         if (isPreview === undefined) {
             this.label = Shape.getUpperLabel;

@@ -127,3 +127,5 @@ export default class Circle extends Shape {
 }
 
 const POINCARE_DISK = new Circle(0, 0, 1);
+POINCARE_DISK.type = 'PoincareDisk';
+POINCARE_DISK.label = 'PD';

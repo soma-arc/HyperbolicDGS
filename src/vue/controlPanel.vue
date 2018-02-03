@@ -17,6 +17,12 @@
                               size="is-small">
                 <span>Point</span>
               </b-radio-button>
+              <b-radio-button v-model.number="scene.operationState"
+                              :native-value="OP_STATE_INVERSION"
+                              @input="changeMouseMode"
+                              size="is-small">
+                <span>Inversion</span>
+              </b-radio-button>
             </b-field>
             <label><b>Hyperbolic Line</b></label>
             <b-field>
@@ -96,6 +102,8 @@ export default {
             'OP_STATE_HYPERBOLIC_LINE_FROM_CENTER': Scene.OP_STATE_HYPERBOLIC_LINE_FROM_CENTER,
             'OP_STATE_PERPENDICULAR_BISECTOR': Scene.OP_STATE_PERPENDICULAR_BISECTOR,
             'OP_STATE_HYPERBOLIC_MIDDLE_POINT': Scene.OP_STATE_HYPERBOLIC_MIDDLE_POINT,
+            'OP_STATE_INVERSION': Scene.OP_STATE_INVERSION,
+            'OP_STATE_CIRCLE_FROM_THREE_POINTS': Scene.OP_STATE_CIRCLE_FROM_THREE_POINTS,
             'activeTab': 0,
             'columns': [
                 {

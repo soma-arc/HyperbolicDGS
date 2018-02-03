@@ -8,13 +8,19 @@ import HyperbolicMiddlePoint from './components/hyperbolicMiddlePoint.js';
 import PointOnCircle from './components/pointOnCircle.js';
 import MoveCommand from './command/moveCommand.js';
 import AddShapeCommand from './command/addShapeCommand.js';
+import InvertOnPoint from './components/invertOnPoint.js';
+import InvertOnCircle from './components/invertOnCircle.js';
+import CircleFromThreePoints from './components/circleFromThreePoints.js';
 
-const OBJ_SELECTION_ORDER = ['Point', 'PointOnCircle', 'HyperbolicMiddlePoint',
-                             'HyperbolicLine', 'HyperbolicLineFromCenter',
-                             'HyperbolicPerpendicularBisector'];
-const OBJ_POINT = ['Point', 'PointOnCircle'];
+const OBJ_POINT = ['Point', 'PointOnCircle', 'InvertOnPoint'];
 const OBJ_CIRCLE = ['PoincareDisk', 'HyperbolicLine', 'HyperbolicLineFromCenter',
-                    'HyperbolicPerpendicularBisector'];
+                    'HyperbolicPerpendicularBisector', 'InvertOnCircle'];
+const OBJ_SELECTION_ORDER = Array.prototype.concat.apply([],
+                                                         [OBJ_POINT,
+                                                          OBJ_CIRCLE]);
+const OBJ_RENDER_ORDER = Array.prototype.concat.apply([],
+                                                      [OBJ_CIRCLE,
+                                                       OBJ_POINT]);
 
 export default class Scene {
     constructor() {
@@ -78,9 +84,11 @@ export default class Scene {
         for (const obj of this.previewObjects) {
             obj.render(ctx);
         }
-        for (const arr of Object.values(this.objects)) {
-            for (const obj of arr) {
-                obj.render(ctx);
+        for (const key of OBJ_RENDER_ORDER) {
+            if (this.objects.hasOwnProperty(key)) {
+                for (const obj of this.objects[key]) {
+                    obj.render(ctx);
+                }
             }
         }
     }
@@ -161,7 +169,6 @@ export default class Scene {
             this.addCommand(new AddShapeCommand(this, hypLine, hypLine.type));
             this.deselectAll();
             this.removePreviewObjects();
-
         }
     }
 
@@ -175,6 +182,35 @@ export default class Scene {
             this.addCommand(new AddShapeCommand(this, p, p.type));
             this.deselectAll();
             this.removePreviewObjects();
+        }
+    }
+
+    applyInversion(mouseState) {
+        if (this.selectedObjects.length === 0) {
+            for (const key of OBJ_CIRCLE) {
+                if (this.selectableObjects.hasOwnProperty(key)) {
+                    this.selectObj(this.selectableObjects[key][0]);
+                }
+            }
+        } else if (this.selectedObjects.length === 1) {
+            for (const key of OBJ_POINT) {
+                if (this.selectableObjects.hasOwnProperty(key)) {
+                    const p = new InvertOnPoint(this.selectableObjects[key][0],
+                                                this.selectedObjects[0]);
+                    this.addCommand(new AddShapeCommand(this, p, p.type));
+                    this.deselectAll();
+                    return;
+                }
+            }
+            for (const key of OBJ_CIRCLE) {
+                if (this.selectableObjects.hasOwnProperty(key)) {
+                    const p = new InvertOnCircle(this.selectableObjects[key][0],
+                                                 this.selectedObjects[0]);
+                    this.addCommand(new AddShapeCommand(this, p, p.type));
+                    this.deselectAll();
+                    return;
+                }
+            }
         }
     }
 
@@ -206,7 +242,11 @@ export default class Scene {
         }
         case Scene.OP_STATE_HYPERBOLIC_MIDDLE_POINT: {
             this.addMiddlePoint(mouseState);
-            break
+            break;
+        }
+        case Scene.OP_STATE_INVERSION: {
+            this.applyInversion(mouseState);
+            break;
         }
         }
         return true;
@@ -332,5 +372,13 @@ export default class Scene {
 
     static get OP_STATE_HYPERBOLIC_MIDDLE_POINT() {
         return 5;
+    }
+
+    static get OP_STATE_INVERSION() {
+        return 6;
+    }
+
+    static get OP_STATE_CIRCLE_FROM_THREE_POINTS() {
+        return 7;
     }
 }
