@@ -23,6 +23,8 @@ export default class HyperbolicMiddlePoint extends Shape {
         this.updateListener = this.update.bind(this);
         this.p1.addUpdateListener(this.updateListener);
         this.p2.addUpdateListener(this.updateListener);
+
+        this.type = 'HyperbolicMiddlePoint';
     }
 
     /**

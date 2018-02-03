@@ -12,7 +12,7 @@ import AddShapeCommand from './command/addShapeCommand.js';
 export default class Scene {
     constructor() {
         this.poincareDisk = new Circle(0, 0, 1);
-        this.objects = [];
+        this.objects = {};
 
         this.operationState = Scene.OP_STATE_SELECT;
 
@@ -51,19 +51,23 @@ export default class Scene {
      */
     render(ctx) {
         this.poincareDisk.render(ctx);
-        for (const obj of this.objects) {
-            obj.render(ctx);
+        for (const arr of Object.values(this.objects)) {
+            for (const obj of arr) {
+                obj.render(ctx);
+            }
         }
     }
 
     selectObj(mouseState) {
-        for (const obj of this.objects) {
-            if (obj.selected) continue;
+        for (const arr of Object.values(this.objects)) {
+            for (const obj of arr) {
+                if (obj.selected) continue;
 
-            const selected = obj.select(mouseState);
-            if (selected) {
-                this.selectedObjects.push(obj);
-                return true;
+                const selected = obj.select(mouseState);
+                if (selected) {
+                    this.selectedObjects.push(obj);
+                    return true;
+                }
             }
         }
         return false;
@@ -74,12 +78,14 @@ export default class Scene {
         if (Circle.POINCARE_DISK.select(mouseState)) {
             circles.push(Circle.POINCARE_DISK);
         }
-        for (const obj of this.objects) {
-            if (!(obj instanceof Circle)) continue;
+        for (const arr of Object.values(this.objects)) {
+            for (const obj of arr) {
+                if (!(obj instanceof Circle)) continue;
 
-            const selected = obj.select(mouseState);
-            if (selected) {
-                circles.push(obj)
+                const selected = obj.select(mouseState);
+                if (selected) {
+                    circles.push(obj)
+                }
             }
         }
         return circles;
@@ -107,12 +113,12 @@ export default class Scene {
             if (circles.length > 0) {
                 console.log('on');
                 const point = new PointOnCircle(p, circles[0]);
-                this.addCommand(new AddShapeCommand(this, point));
+                this.addCommand(new AddShapeCommand(this, point, point.type));
                 break;
             }
 
             const point = new Point(p.re, p.im);
-            this.addCommand(new AddShapeCommand(this, point));
+            this.addCommand(new AddShapeCommand(this, point, point.type));
             break;
         }
         case Scene.OP_STATE_HYPERBOLIC_LINE: {
@@ -120,7 +126,7 @@ export default class Scene {
             if (this.selectedObjects.length === 2) {
                 const hypLine = new HyperbolicLine(this.selectedObjects[0],
                                                    this.selectedObjects[1]);
-                this.addCommand(new AddShapeCommand(this, hypLine));
+                this.addCommand(new AddShapeCommand(this, hypLine, hypLine.type));
             }
             break;
         }
@@ -128,7 +134,7 @@ export default class Scene {
             const selected = this.selectObj(mouseState);
             if (this.selectedObjects.length === 1) {
                 const hypLine = new HyperbolicLineFromCenter(this.selectedObjects[0]);
-                this.addCommand(new AddShapeCommand(this, hypLine));
+                this.addCommand(new AddShapeCommand(this, hypLine, hypLine.type));
             }
             break;
         }
@@ -137,7 +143,7 @@ export default class Scene {
             if (this.selectedObjects.length === 2) {
                 const hypLine = new PerpendicularBisector(this.selectedObjects[0],
                                                           this.selectedObjects[1]);
-                this.addCommand(new AddShapeCommand(this, hypLine));
+                this.addCommand(new AddShapeCommand(this, hypLine, hypLine.type));
             }
             break;
         }
@@ -146,7 +152,7 @@ export default class Scene {
             if (this.selectedObjects.length === 2) {
                 const p = new HyperbolicMiddlePoint(this.selectedObjects[0],
                                                     this.selectedObjects[1]);
-                this.addCommand(new AddShapeCommand(this, p));
+                this.addCommand(new AddShapeCommand(this, p, p.type));
             }
             break
         }

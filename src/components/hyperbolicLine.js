@@ -1,3 +1,4 @@
+import Shape from './shape.js';
 import Complex from '../utils/complex.js';
 import Circle from './circle.js';
 
@@ -14,6 +15,8 @@ export default class HyperbolicLine extends Circle {
         this.updateListener = this.update.bind(this);
         this.p1.addUpdateListener(this.updateListener);
         this.p2.addUpdateListener(this.updateListener);
+        this.type = 'HyperbolicLine';
+        this.label = Shape.getLowerLabel;
     }
 
     removeUpdateListeners() {

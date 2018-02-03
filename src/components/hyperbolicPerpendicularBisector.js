@@ -17,6 +17,9 @@ export default class HyperbolicPerpendicularBisector extends Circle {
         this.p1.addUpdateListener(this.updateListener);
         this.p2.addUpdateListener(this.updateListener);
         this.computeCircle();
+
+        this.type = 'HyperbolicPerpendicularBisector';
+        this.label = Shape.getLowerLabel;
     }
 
     removeUpdateListeners() {

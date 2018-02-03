@@ -24,7 +24,7 @@
                               :native-value="OP_STATE_HYPERBOLIC_LINE"
                               @input="changeMouseMode"
                               size="is-small">
-                <span>TwoPoint</span>
+                <span>TwoPoints</span>
               </b-radio-button>
 
               <b-radio-button v-model.number="scene.operationState"
@@ -119,12 +119,12 @@ export default {
         changeMouseMode: function() {
             this.scene.deselectAll();
             this.canvasHandler.render();
-            console.log(this.scene.operationState);
         }
     },
     computed: {
         sceneObjectsList: function() {
-            return this.scene.objects;
+            return Array.prototype.concat.apply([],
+                                                Object.values(this.scene.objects));
         }
     }
 }

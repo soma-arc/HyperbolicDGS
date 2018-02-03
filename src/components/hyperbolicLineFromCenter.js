@@ -15,6 +15,8 @@ export default class HyperbolicLineFromCenter extends Circle {
         this.updateListener = this.update.bind(this);
         this.centerPoint.addUpdateListener(this.updateListener);
         this.update();
+
+        this.type = 'HyperbolicLineFromCenter';
     }
 
     removeUpdateListeners() {
