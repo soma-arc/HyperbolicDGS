@@ -37,5 +37,8 @@ footer {
 #left {
     height: 50px;
     display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-left: 10px;
 }
 </style>

@@ -47,6 +47,11 @@ export default class Scene {
         this.isSelectable = false;
     }
 
+    clearObjects() {
+        this.objects = {};
+        this.objects['PoincareDisk'] = [Circle.POINCARE_DISK];
+    }
+
     checkSelectable(mouseState) {
         let selectable = false;
         this.selectableObjects = {};
