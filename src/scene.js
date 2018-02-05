@@ -14,11 +14,12 @@ import CircleFromThreePoints from './components/circleFromThreePoints.js';
 import CircleFromCenterAndR from './components/circleFromCenterAndR.js';
 import EuclideanLine from './components/euclideanLine.js';
 import EuclideanTangentLines from './components/euclideanTangentLines.js';
+import HyperbolicTangentLines from './components/hyperbolicTangentLines.js'
 
 const OBJ_POINT = ['Point', 'PointOnCircle', 'InvertOnPoint'];
 const OBJ_CIRCLE = ['PoincareDisk', 'HyperbolicLine', 'HyperbolicLineFromCenter',
                     'HyperbolicPerpendicularBisector', 'InvertOnCircle',
-                    'CircleFromThreePoints', 'CircleFromCenterAndR'];
+                    'CircleFromThreePoints', 'CircleFromCenterAndR', 'HyperbolicTangentLines'];
 const OBJ_LINE = ['EuclideanLine', 'EuclideanTangentLines']
 const OBJ_SELECTION_ORDER = Array.prototype.concat.apply([],
                                                          [OBJ_POINT,
@@ -283,6 +284,23 @@ export default class Scene {
         }
     }
 
+    addHyperbolicTangentLines(mouseState) {
+        if (this.selectedObjects.length === 0) {
+            for (const key of OBJ_CIRCLE) {
+                if (this.selectableObjects.hasOwnProperty(key)) {
+                    this.selectObj(this.selectableObjects[key][0]);
+                }
+            }
+        } else if (this.selectedObjects.length === 1) {
+            this.addPoint(mouseState);
+            const lines = new HyperbolicTangentLines(this.selectedObjects[0],
+                                                    this.selectedObjects[1]);
+            this.addCommand(new AddShapeCommand(this, lines, lines.type));
+            this.deselectAll();
+            this.removePreviewObjects();
+        }
+    }
+
     mouseLeft(mouseState) {
         this.moved = false;
 
@@ -331,6 +349,10 @@ export default class Scene {
         }
         case Scene.OP_STATE_EUCLIDEAN_TANGENT_LINES: {
             this.addEuclideanTangentLines(mouseState);
+            break;
+        }
+        case Scene.OP_STATE_HYPERBOLIC_TANGENT_LINES: {
+            this.addHyperbolicTangentLines(mouseState);
             break;
         }
         }
@@ -531,5 +553,9 @@ export default class Scene {
 
     static get OP_STATE_EUCLIDEAN_TANGENT_LINES() {
         return 10;
+    }
+
+    static get OP_STATE_HYPERBOLIC_TANGENT_LINES() {
+        return 11;
     }
 }

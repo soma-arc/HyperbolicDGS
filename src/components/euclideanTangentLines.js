@@ -12,7 +12,6 @@ export default class EuclideanTangentLines extends Shape {
         this.updateListener = this.update.bind(this);
         this.circle.addUpdateListener(this.updateListener);
         this.p.addUpdateListener(this.updateListener);
-        this.type = 'HyperbolicLine';
         if (isPreview === undefined) {
             this.label = Shape.getLowerLabel;
         } else {
