@@ -1,56 +1,56 @@
 <template>
-  <div class="controlPanel">
-      <b-tabs position="is-centered" v-model="activeTab">
-        <b-tab-item label="Component">
-          <section id="component">
-            <label><b>Basic</b></label>
-            <b-field>
-              <b-radio-button v-model.number="scene.operationState"
-                              :native-value="OP_STATE_SELECT"
-                              @input="changeMouseMode"
-                              size="is-small">
-                <span>Select</span>
-              </b-radio-button>
-              <b-radio-button v-model.number="scene.operationState"
-                              :native-value="OP_STATE_POINT"
-                              @input="changeMouseMode"
-                              size="is-small">
-                <span>Point</span>
-              </b-radio-button>
-              <b-radio-button v-model.number="scene.operationState"
-                              :native-value="OP_STATE_INVERSION"
-                              @input="changeMouseMode"
-                              size="is-small">
-                <span>Inversion</span>
-              </b-radio-button>
-            </b-field>
-            <label><b>Hyperbolic Line</b></label>
-            <b-field>
-              <b-radio-button v-model.number="scene.operationState"
-                              :native-value="OP_STATE_HYPERBOLIC_LINE"
-                              @input="changeMouseMode"
-                              size="is-small">
-                <span>TwoPoints</span>
-              </b-radio-button>
+<div class="controlPanel">
+  <b-tabs position="is-centered" v-model="activeTab">
+    <b-tab-item label="Component">
+      <section id="component">
+        <label><b>Basic</b></label>
+        <b-field>
+          <b-radio-button v-model.number="scene.operationState"
+                          :native-value="OP_STATE_SELECT"
+                          @input="changeMouseMode"
+                          size="is-small">
+            <span>Select</span>
+          </b-radio-button>
+          <b-radio-button v-model.number="scene.operationState"
+                          :native-value="OP_STATE_POINT"
+                          @input="changeMouseMode"
+                          size="is-small">
+            <span>Point</span>
+          </b-radio-button>
+          <b-radio-button v-model.number="scene.operationState"
+                          :native-value="OP_STATE_INVERSION"
+                          @input="changeMouseMode"
+                          size="is-small">
+            <span>Inversion</span>
+          </b-radio-button>
+        </b-field>
+        <label><b>Hyperbolic Line</b></label>
+        <b-field>
+          <b-radio-button v-model.number="scene.operationState"
+                          :native-value="OP_STATE_HYPERBOLIC_LINE"
+                          @input="changeMouseMode"
+                          size="is-small">
+            <span>TwoPoints</span>
+          </b-radio-button>
 
-              <b-radio-button v-model.number="scene.operationState"
-                              :native-value="OP_STATE_HYPERBOLIC_LINE_FROM_CENTER"
-                              @input="changeMouseMode"
-                              size="is-small">
-                <span>FromCenter</span>
-              </b-radio-button>
-            </b-field>
-            <label><b>Bisection</b></label>
-            <b-field>
-              <b-radio-button v-model.number="scene.operationState"
-                              :native-value="OP_STATE_PERPENDICULAR_BISECTOR" @input="changeMouseMode"
-                              size="is-small">
-                <span>PerpendicularBisector</span>
-              </b-radio-button>
+          <b-radio-button v-model.number="scene.operationState"
+                          :native-value="OP_STATE_HYPERBOLIC_LINE_FROM_CENTER"
+                          @input="changeMouseMode"
+                          size="is-small">
+            <span>FromCenter</span>
+          </b-radio-button>
+        </b-field>
+        <label><b>Bisection</b></label>
+        <b-field>
+          <b-radio-button v-model.number="scene.operationState"
+                          :native-value="OP_STATE_PERPENDICULAR_BISECTOR" @input="changeMouseMode"
+                          size="is-small">
+            <span>PerpendicularBisector</span>
+          </b-radio-button>
 
-              <b-radio-button v-model.number="scene.operationState"
-                              :native-value="OP_STATE_HYPERBOLIC_MIDDLE_POINT" @input="changeMouseMode"
-                              size="is-small">
+          <b-radio-button v-model.number="scene.operationState"
+                          :native-value="OP_STATE_HYPERBOLIC_MIDDLE_POINT" @input="changeMouseMode"
+                          size="is-small">
                 <span>MiddlePoint</span>
               </b-radio-button>
             </b-field>
@@ -67,6 +67,20 @@
                               size="is-small">
                 <span>CenterAndR</span>
               </b-radio-button>
+            </b-field>
+            <label><b>Euclidean Line</b></label>
+            <b-field>
+              <b-radio-button v-model.number="scene.operationState"
+                              :native-value="OP_STATE_EUCLIDEAN_LINE" @input="changeMouseMode"
+                              size="is-small">
+                <span>TwoPoints</span>
+              </b-radio-button>
+
+                <b-radio-button v-model.number="scene.operationState"
+                                :native-value="OP_STATE_EUCLIDEAN_TANGENT_LINES" @input="changeMouseMode"
+                                size="is-small">
+                  <span>Tangent</span>
+                </b-radio-button>
             </b-field>
           </section>
         </b-tab-item>
@@ -119,6 +133,8 @@ export default {
             'OP_STATE_INVERSION': Scene.OP_STATE_INVERSION,
             'OP_STATE_CIRCLE_FROM_THREE_POINTS': Scene.OP_STATE_CIRCLE_FROM_THREE_POINTS,
             'OP_STATE_CIRCLE_FROM_CENTER_AND_R': Scene.OP_STATE_CIRCLE_FROM_CENTER_AND_R,
+            'OP_STATE_EUCLIDEAN_LINE': Scene.OP_STATE_EUCLIDEAN_LINE,
+            'OP_STATE_EUCLIDEAN_TANGENT_LINES': Scene.OP_STATE_EUCLIDEAN_TANGENT_LINES,
             'activeTab': 0,
             'columns': [
                 {

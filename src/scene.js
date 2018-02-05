@@ -12,17 +12,22 @@ import InvertOnPoint from './components/invertOnPoint.js';
 import InvertOnCircle from './components/invertOnCircle.js';
 import CircleFromThreePoints from './components/circleFromThreePoints.js';
 import CircleFromCenterAndR from './components/circleFromCenterAndR.js';
+import EuclideanLine from './components/euclideanLine.js';
+import EuclideanTangentLines from './components/euclideanTangentLines.js';
 
 const OBJ_POINT = ['Point', 'PointOnCircle', 'InvertOnPoint'];
 const OBJ_CIRCLE = ['PoincareDisk', 'HyperbolicLine', 'HyperbolicLineFromCenter',
                     'HyperbolicPerpendicularBisector', 'InvertOnCircle',
                     'CircleFromThreePoints', 'CircleFromCenterAndR'];
+const OBJ_LINE = ['EuclideanLine', 'EuclideanTangentLines']
 const OBJ_SELECTION_ORDER = Array.prototype.concat.apply([],
                                                          [OBJ_POINT,
-                                                          OBJ_CIRCLE]);
+                                                          OBJ_CIRCLE,
+                                                          OBJ_LINE]);
 const OBJ_RENDER_ORDER = Array.prototype.concat.apply([],
                                                       [OBJ_CIRCLE,
-                                                       OBJ_POINT]);
+                                                       OBJ_POINT,
+                                                       OBJ_LINE]);
 
 export default class Scene {
     constructor() {
@@ -243,6 +248,36 @@ export default class Scene {
         }
     }
 
+    addEuclideanLine(mouseState) {
+        if (this.selectedObjects.length === 0) {
+            this.addPoint(mouseState);
+        } else if (this.selectedObjects.length === 1) {
+            this.addPoint(mouseState);
+            const line = new EuclideanLine(this.selectedObjects[0],
+                                           this.selectedObjects[1]);
+            this.addCommand(new AddShapeCommand(this, line, line.type));
+            this.deselectAll();
+            this.removePreviewObjects();
+        }
+    }
+
+    addEuclideanTangentLines(mouseState) {
+        if (this.selectedObjects.length === 0) {
+            for (const key of OBJ_CIRCLE) {
+                if (this.selectableObjects.hasOwnProperty(key)) {
+                    this.selectObj(this.selectableObjects[key][0]);
+                }
+            }
+        } else if (this.selectedObjects.length === 1) {
+            this.addPoint(mouseState);
+            const lines = new EuclideanTangentLines(this.selectedObjects[0],
+                                                   this.selectedObjects[1]);
+            this.addCommand(new AddShapeCommand(this, lines, lines.type));
+            this.deselectAll();
+            this.removePreviewObjects();
+        }
+    }
+
     mouseLeft(mouseState) {
         this.moved = false;
 
@@ -283,6 +318,14 @@ export default class Scene {
         }
         case Scene.OP_STATE_CIRCLE_FROM_CENTER_AND_R: {
             this.addCircleFromCenterAndR(mouseState);
+            break;
+        }
+        case Scene.OP_STATE_EUCLIDEAN_LINE: {
+            this.addEuclideanLine(mouseState);
+            break;
+        }
+        case Scene.OP_STATE_EUCLIDEAN_TANGENT_LINES: {
+            this.addEuclideanTangentLines(mouseState);
             break;
         }
         }
@@ -376,6 +419,32 @@ export default class Scene {
             }
             break;
         }
+        case Scene.OP_STATE_EUCLIDEAN_LINE: {
+            if (this.selectedObjects.length === 1) {
+                this.removePreviewObjects();
+                const p = new Point(mouseState.position.re,
+                                    mouseState.position.im,
+                                    true);
+                this.previewObjects.push(p);
+                this.previewObjects.push(new EuclideanLine(this.selectedObjects[0],
+                                                           p, true));
+                return true;
+            }
+            break;
+        }
+        case Scene.OP_STATE_EUCLIDEAN_TANGENT_LINES: {
+            if (this.selectedObjects.length === 1) {
+                this.removePreviewObjects();
+                const p = new Point(mouseState.position.re,
+                                    mouseState.position.im,
+                                    true);
+                this.previewObjects.push(p);
+                this.previewObjects.push(new EuclideanTangentLines(this.selectedObjects[0],
+                                                                   p, true));
+                return true;
+            }
+            break;
+        }
         }
         this.previewObjects = [];
         return false;
@@ -449,5 +518,13 @@ export default class Scene {
 
     static get OP_STATE_CIRCLE_FROM_CENTER_AND_R() {
         return 8;
+    }
+
+    static get OP_STATE_EUCLIDEAN_LINE() {
+        return 9;
+    }
+
+    static get OP_STATE_EUCLIDEAN_TANGENT_LINES() {
+        return 10;
     }
 }

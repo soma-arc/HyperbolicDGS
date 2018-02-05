@@ -121,6 +121,23 @@ export default class Circle extends Shape {
         return [p1, p2];
     }
 
+    /**
+     * http://shogo82148.github.io/homepage/memo/geometry/point-circle.html
+     * @param {Circle} c
+     * @param {Complex} p
+     * @returns {[Complex, Complex]}
+     */
+    static tangentLinePoints(c, p) {
+        const pp = p.sub(c.center);
+        const sqpp = pp.absSq();
+        const rt = Math.sqrt(sqpp - c.r * c.r);
+        const a1 = new Complex(c.r * (pp.re * c.r + pp.im * rt) / sqpp,
+                               c.r * (pp.im * c.r - pp.re * rt) / sqpp);
+        const a2 = new Complex(c.r * (pp.re * c.r - pp.im * rt) / sqpp,
+                               c.r * (pp.im * c.r + pp.re * rt) / sqpp);
+        return [a1.add(c.center), a2.add(c.center)];
+    }
+
     static get POINCARE_DISK() {
         return POINCARE_DISK;
     }
